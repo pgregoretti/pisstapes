@@ -38,9 +38,11 @@ public class Tween {
 	
 	public void setStart() {
 		if (this.param.equals("X")) {
+			System.out.println("Incr X by " + Double.toString(incr));
 			this.object.setPositionX(this.startVal);
 		}
 		if (this.param.equals("Y")) {
+			System.out.println("Incr Y by " + Double.toString(incr));
 			this.object.setPositionY(this.startVal);
 		}
 		if (this.param.equals("SCALE_X")) {
@@ -56,10 +58,22 @@ public class Tween {
 	
 	public boolean isComplete() {
 		if (this.param.equals("X")) {
-			return this.object.getPositionX() >= this.endVal;
+			if(this.startVal >= this.endVal){
+				return this.object.getPositionX() <= this.endVal;
+			}
+			if(this.startVal < this.endVal){
+				return this.object.getPositionX() >= this.endVal;
+			}
+			//return Math.abs(this.object.getPositionX() - this.endVal) == 0;
 		}
 		if (this.param.equals("Y")) {
-			return this.object.getPositionY() >= this.endVal;
+			if(this.startVal >= this.endVal){
+				return this.object.getPositionY() <= this.endVal;
+			}
+			if(this.startVal < this.endVal){
+				return this.object.getPositionY() >= this.endVal;
+			}
+			//return Math.abs(this.object.getPositionY() - this.endVal) == 0;
 		}
 		if (this.param.equals("SCALE_X")) {
 			return this.object.getScaleX() >= this.endVal;
