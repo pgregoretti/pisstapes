@@ -30,19 +30,30 @@ public class Tween {
 		this.endVal = endVal;
 		this.time = time;
 		this.isAnimating = true;
+		
+		//System.out.println("Incr Y by " + Double.toString(incr));
 		if (this.transition.equals("LINEAR")) {
 			this.incr = (this.endVal - this.startVal)/this.time;
+			System.out.println("Incr " + this.param + " by " + Double.toString(incr));
+			if(Math.abs(incr) < 0.5 && incr < 0){
+				System.out.print("Fixing value from " + Double.toString(incr) + " to ");
+				this.incr = -1;
+				System.out.println(Double.toString(incr));
+			}
+			if(Math.abs(incr) < 0.5 && incr > 0){
+				System.out.print("Fixing value from " + Double.toString(incr) + " to ");
+				this.incr = 1;
+				System.out.println(Double.toString(incr));
+			}
 		}
 		setStart();
 	}
 	
 	public void setStart() {
 		if (this.param.equals("X")) {
-			System.out.println("Incr X by " + Double.toString(incr));
 			this.object.setPositionX(this.startVal);
 		}
 		if (this.param.equals("Y")) {
-			System.out.println("Incr Y by " + Double.toString(incr));
 			this.object.setPositionY(this.startVal);
 		}
 		if (this.param.equals("SCALE_X")) {

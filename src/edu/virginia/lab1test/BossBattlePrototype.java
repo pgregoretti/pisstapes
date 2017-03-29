@@ -76,7 +76,8 @@ public class BossBattlePrototype extends Game {
 		linkEnter2.animate("SCALE_Y", 0.0, 1.0, 50);
 		tempX = hillaryRandom.nextInt(900);
 		tempY = hillaryRandom.nextInt(400);
-		System.out.println("Hillary is travelling to " + "(" + Integer.toString(tempX) + ", " + Integer.toString(tempY) + ")");
+		//System.out.println("Hillary is travelling to " + "(" + Integer.toString(tempX) + ", " + Integer.toString(tempY) + ")");
+		System.out.println("Hillary is travelling to " + Integer.toString(tempX));
 		hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 125);
 		hillaryY.animate("Y", hillary.getPositionY(), (double)tempY, 125);
 //		rupeeScaleX.animate("SCALE_X", 1.0, 4.0, 10);
@@ -222,15 +223,27 @@ public class BossBattlePrototype extends Game {
 //			}
 //		}
 		
-		// tween index 1 and 2 are hillaryX and hillaryY respectively, can make hashmap later
 		if(!TweenJuggler.getInstance().getTweens().contains(hillaryX) && !TweenJuggler.getInstance().getTweens().contains(hillaryY)){
+			/** X TWEEN **/
+			int prevX = tempX;
 			tempX = hillaryRandom.nextInt(900);
-			tempY = hillaryRandom.nextInt(400);
-			System.out.println("Hillary is travelling to " + "(" + Integer.toString(tempX) + ", " + Integer.toString(tempY) + ")");
 			hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 125);
+			TweenJuggler.getInstance().add(hillaryX);
+			
+			/** Y TWEEN **/
+			int prevY = tempY;
+			tempY = hillaryRandom.nextInt(400);
 			hillaryY.animate("Y", hillary.getPositionY(), (double)tempY, 125);
-			TweenJuggler.getInstance().add(hillaryX); // 2
-			TweenJuggler.getInstance().add(hillaryY); // 3
+			TweenJuggler.getInstance().add(hillaryY); 
+			
+			/** DEBUGGER MESSAGES **/
+			//System.out.println("Hillary is travelling from " + Integer.toString(prevX) + " to " + Integer.toString(tempX));
+			//System.out.println("Hillary is travelling from " + Integer.toString(prevY) + " to " + Integer.toString(tempXY));
+			System.out.println("Hillary is travelling from (" + Integer.toString(prevX) 
+					+ ", " + Integer.toString(prevY) + ") to (" 
+					+ Integer.toString(tempX) + ", " + Integer.toString(tempY) + ")");
+			
+			
 		}
 		
 		/* could do bounds checking by having border sprites just outside the frame
