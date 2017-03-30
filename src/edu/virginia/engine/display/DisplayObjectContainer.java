@@ -78,7 +78,7 @@ public class DisplayObjectContainer extends DisplayObject {
 	 * */
 	@Override
 	protected void update(ArrayList<String> pressedKeys) {
-		
+		super.update(pressedKeys);
 	}
 
 	/**

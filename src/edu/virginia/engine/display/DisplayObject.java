@@ -276,11 +276,6 @@ public class DisplayObject extends EventDispatcher {
 	 * to update objects appropriately.
 	 * */
 	protected void update(ArrayList<String> pressedKeys) {
-//		/* DOING PHYSICS STUFF */
-//		if (this.hasPhysics) {
-//
-//			
-//		}
 		
 	}
 
