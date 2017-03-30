@@ -24,6 +24,7 @@ public class BossBattlePrototype extends Game {
 	Random hillaryRandom = new Random();
 	int tempX;
 	int tempY;
+	int timer = 60;
 
 	/* Create a sprite object for our game. We'll use link */
 	AnimatedSprite link = new AnimatedSprite("Link", "link-spritesheet.png", 120, 127, 4, 10, 10);
@@ -31,14 +32,14 @@ public class BossBattlePrototype extends Game {
 	Tween linkEnter2 = new Tween(link);
 	
 	Sprite hillary = new Sprite("hillary" , "hillary.png");
-//	Sprite rupee = new Sprite("rupee", "rupee.png");
-//	Tween rupeeScaleX = new Tween(rupee);
-//	Tween rupeeScaleY = new Tween(rupee);
-//	Tween rupeeX = new Tween(rupee);
-//	Tween rupeeY = new Tween(rupee);
-//	public Tween rupeeAlpha = new Tween(rupee);
 	Tween hillaryX = new Tween(hillary);
 	Tween hillaryY = new Tween(hillary);
+	
+	Sprite bullet = new Sprite("bullet", "bullet.png");
+	Tween bulletY = new Tween(bullet);
+	
+	Sprite fireball = new Sprite("fireball", "fireball.png");
+	Tween fireballY = new Tween(fireball);
 	
 	EventDispatcher coinDispatcher = new EventDispatcher();
 	QuestManager myQuestManager = new QuestManager();
@@ -58,8 +59,8 @@ public class BossBattlePrototype extends Game {
 		coinDispatcher.addEventListener(myQuestManager, "rupee");
 		
 		/******* ADD SPRITES *******/
+		link.addChild(bullet);
 		this.addChild(link);
-//		this.addChild(rupee);
 		this.addChild(hillary);
 		
 		/******* ASSIGN ANIMATIONS *******/
@@ -68,7 +69,6 @@ public class BossBattlePrototype extends Game {
 		
 		/******* POSITION SPRITES *******/
 		link.setPosition(400, 550);
-//		rupee.setPosition(450, 0);
 		hillary.setPosition(340, 0);
 		
 		/******* SETUP TWEENS *******/
@@ -80,11 +80,7 @@ public class BossBattlePrototype extends Game {
 		System.out.println("Hillary is travelling to " + Integer.toString(tempX));
 		hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 125);
 		hillaryY.animate("Y", hillary.getPositionY(), (double)tempY, 125);
-//		rupeeScaleX.animate("SCALE_X", 1.0, 4.0, 10);
-//		rupeeScaleY.animate("SCALE_Y", 1.0, 4.0, 10);
-//		rupeeX.animate("X", 450, 200, 10);
-//		rupeeY.animate("Y", 0, 100, 10);
-//		rupeeAlpha.animate("ALPHA", 1.0, 0.0, 10);
+		
 
 		
 		/******* ADD TWEENS *******/
@@ -117,6 +113,105 @@ public class BossBattlePrototype extends Game {
 		
 		
 		link.setPosition(xPos, yPos);
+		
+		/** PRESS SPACE TO SHOOT BULLET **/
+		if(pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_SPACE))){
+			if(!TweenJuggler.getInstance().getTweens().contains(bulletY)){
+				bulletY.animate("Y", bullet.getPositionY(), -900, 150);
+				link.removeChild(bullet);
+				this.addChild(bullet);
+				bullet.setPositionY(link.getPositionY());
+				bullet.setPositionX(link.getPositionX());
+				TweenJuggler.getInstance().add(bulletY);
+			}
+			
+		}
+		
+		// This is a little wonky maybe
+		/** RESPAWN BULLET **/
+		if(!TweenJuggler.getInstance().getTweens().contains(bulletY) && bullet.getPositionY() <= -128){
+			int i = TweenJuggler.getInstance().getTweens().indexOf(bulletY);
+			TweenJuggler.getInstance().getTweens().remove(i);
+			this.removeChild(bullet);
+			link.addChild(bullet);
+			bullet.setPositionY(link.getPositionY());
+			bullet.setPositionX(link.getPositionX());
+		}
+		
+		/** BULLET COLLISION DETECTION **/
+		if(bullet.collidesWith(hillary) && this.contains(bullet)){
+			link.removeChild(bullet);
+			this.removeChild(bullet);
+			int i = TweenJuggler.getInstance().getTweens().indexOf(bulletY);
+			TweenJuggler.getInstance().getTweens().remove(i);
+			System.out.println("HILLARY HAS BEEN HIT");
+			link.addChild(bullet);
+			bullet.setPositionY(link.getPositionY());
+			bullet.setPositionX(link.getPositionX());
+		}
+		
+		/** RANDOM HILLARY MOVE GENERATOR **/
+		if(timer==0){
+			int move = hillaryRandom.nextInt(3);
+			if(move==0 && !TweenJuggler.getInstance().getTweens().contains(fireballY)){
+				hillary.addChild(fireball);
+				fireballY.animate("Y", fireball.getPositionY(), 900, 150);
+				hillary.removeChild(fireball);
+				this.addChild(fireball);
+				fireball.setPositionY(hillary.getPositionY());
+				fireball.setPositionX(hillary.getPositionX());
+				TweenJuggler.getInstance().add(fireballY);	
+			}
+			if(move==1){
+				System.out.println("Hillary uses attack 1");
+			}
+			if(move==2){
+				System.out.println("Hillary uses attack 2");
+			}
+			timer = 60*(hillaryRandom.nextInt(5)+1);
+			System.out.println("Set timer to: " + Integer.toString(timer/60));
+		} else {
+			timer--;
+		}
+		
+		/** WEIRD EDGE CASE TEST **/
+		// causes a flicker :(
+		if(!TweenJuggler.getInstance().getTweens().contains(fireballY) && (this.contains(fireball) || hillary.contains(fireball))){
+			this.removeChild(fireball);
+		}
+		
+		/** FIREBALL COLLISION DETECTION **/
+		if(fireball.collidesWith(link) && this.contains(fireball)){
+			hillary.removeChild(fireball);
+			this.removeChild(fireball);
+			int i = TweenJuggler.getInstance().getTweens().indexOf(fireballY);
+			TweenJuggler.getInstance().getTweens().remove(i);
+			System.out.println("LINK HAS BEEN HIT");
+		}
+		
+		/** HILLARY MOVEMENT **/
+		if(!TweenJuggler.getInstance().getTweens().contains(hillaryX) && !TweenJuggler.getInstance().getTweens().contains(hillaryY)){
+			/** X TWEEN **/
+			int prevX = tempX;
+			tempX = hillaryRandom.nextInt(900);
+			hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 125);
+			TweenJuggler.getInstance().add(hillaryX);
+			
+			/** Y TWEEN **/
+			int prevY = tempY;
+			tempY = hillaryRandom.nextInt(400);
+			hillaryY.animate("Y", hillary.getPositionY(), (double)tempY, 125);
+			TweenJuggler.getInstance().add(hillaryY); 
+			
+			/** DEBUGGER MESSAGES **/
+			//System.out.println("Hillary is travelling from " + Integer.toString(prevX) + " to " + Integer.toString(tempX));
+			//System.out.println("Hillary is travelling from " + Integer.toString(prevY) + " to " + Integer.toString(tempXY));
+			System.out.println("Hillary is travelling from (" + Integer.toString(prevX) 
+					+ ", " + Integer.toString(prevY) + ") to (" 
+					+ Integer.toString(tempX) + ", " + Integer.toString(tempY) + ")");
+			
+			
+		}
 
 		if(pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_UP)) && link.getVY() == 0) {
 			//JUMPING ACTIONS
@@ -188,62 +283,6 @@ public class BossBattlePrototype extends Game {
 			if (link.getVX() >= 0) {
 				link.setVX(0.0);
 			}
-		}
-		
-
-		/**** CHECK FOR COLLISIONS ****/
-//		if (link.collidesWith(platform1)) {
-//			Rectangle hit = link.getCollisionWith(platform1);
-//			double rx = hit.getMaxX() - hit.getMinX();
-//			double ry = hit.getMaxY() - hit.getMinY();
-//			if (rx <= ry) { //hit from the side of platform
-//				xPos = 324; //platform x + platform's width
-//				link.setVX(0);
-//			} else if (ry < rx) { //hit from the top of platform
-//				yPos = 148; //platform y - link's height
-//				link.setVY(0);
-//			}
-//		}
-		
-//		if(this.contains(rupee)) {
-//			if (rupee.getCollidable()) {
-//				if (link.collidesWith(rupee)) {
-//					sound.PlaySoundEffect("rupee");
-//					rupee.setCollidable(false);
-//					TweenJuggler.getInstance().add(rupeeScaleX);
-//					TweenJuggler.getInstance().add(rupeeScaleY);
-//					TweenJuggler.getInstance().add(rupeeX);
-//					TweenJuggler.getInstance().add(rupeeY);
-//					
-//				}
-//			} else {
-//				if(!TweenJuggler.getInstance().getTweens().contains(rupeeY) && !TweenJuggler.getInstance().getTweens().contains(rupeeAlpha)){
-//					coinDispatcher.dispatchEvent(new TweenEvent("rupee", rupeeAlpha, coinDispatcher));
-//				}
-//			}
-//		}
-		
-		if(!TweenJuggler.getInstance().getTweens().contains(hillaryX) && !TweenJuggler.getInstance().getTweens().contains(hillaryY)){
-			/** X TWEEN **/
-			int prevX = tempX;
-			tempX = hillaryRandom.nextInt(900);
-			hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 125);
-			TweenJuggler.getInstance().add(hillaryX);
-			
-			/** Y TWEEN **/
-			int prevY = tempY;
-			tempY = hillaryRandom.nextInt(400);
-			hillaryY.animate("Y", hillary.getPositionY(), (double)tempY, 125);
-			TweenJuggler.getInstance().add(hillaryY); 
-			
-			/** DEBUGGER MESSAGES **/
-			//System.out.println("Hillary is travelling from " + Integer.toString(prevX) + " to " + Integer.toString(tempX));
-			//System.out.println("Hillary is travelling from " + Integer.toString(prevY) + " to " + Integer.toString(tempXY));
-			System.out.println("Hillary is travelling from (" + Integer.toString(prevX) 
-					+ ", " + Integer.toString(prevY) + ") to (" 
-					+ Integer.toString(tempX) + ", " + Integer.toString(tempY) + ")");
-			
-			
 		}
 		
 		/* could do bounds checking by having border sprites just outside the frame

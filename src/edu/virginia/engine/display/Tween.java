@@ -34,7 +34,7 @@ public class Tween {
 		//System.out.println("Incr Y by " + Double.toString(incr));
 		if (this.transition.equals("LINEAR")) {
 			this.incr = (this.endVal - this.startVal)/this.time;
-			System.out.println("Incr " + this.param + " by " + Double.toString(incr));
+			System.out.println("Incr " + this.param + " of " + this.object.getId() + " by " + Double.toString(incr));
 			if(Math.abs(incr) < 0.5 && incr < 0){
 				System.out.print("Fixing value from " + Double.toString(incr) + " to ");
 				this.incr = -1;
