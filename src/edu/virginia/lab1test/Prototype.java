@@ -87,23 +87,20 @@ public class Prototype extends Game {
 
 		trump.setPosition(xPos, yPos);
 		
-		/****** DROPPING PHYSICS OF OBJECTS *****/
+		/****** DROPPING PHYSICS OF OBJECTS ******/
 		//GOOD OBJECTS
 		for (int i = 0; i < good.size(); i++) {
 			good.get(i).setPositionY(good.get(i).getPositionY() + good.get(i).getVY());
 			if (good.get(i).getPositionY() >= 550) {
 				//CHECK FOR COLLISIONS
 				if(good.get(i).collidesWith(trump)){
-					//IF COLLIDE, ADD POINTS
-					pointVal++;
-					
+					pointVal+=5;
+					this.removeChild(good.get(i));
+					good.remove(i);
+					i--;
 				}
-				//REMOVE FROM DISPLAY TREE
-				this.removeChild(good.get(i));
-				//REMOVE FROM ARRAYLIST
-				good.remove(good.get(i));
-			}
-			if (good.get(i).getPositionY() >= 640) {
+				
+			} else if (good.get(i).getPositionY() >= 640) {
 				this.removeChild(good.get(i));
 				good.remove(i);
 				i--;
@@ -115,18 +112,14 @@ public class Prototype extends Game {
 			bad.get(i).setPositionY(bad.get(i).getPositionY() + bad.get(i).getVY());
 			if (bad.get(i).getPositionY() >= 550) {
 				//CHECK FOR COLLISIONS
-				//IF COLLIDE, REMOVE HEALTH
 				if(bad.get(i).collidesWith(trump)){
-					healthVal--;
-					
+					healthVal-=10;
+					this.removeChild(bad.get(i));
+					bad.remove(i);
+					i--;
 				}
-				//REMOVE FROM DISPLAY TREE
-				this.removeChild(bad.get(i));
 				
-				//REMOVE FROM ARRAYLIST
-				bad.remove(bad.get(i));
-			}
-			if (bad.get(i).getPositionY() >= 640) {
+			} else if (bad.get(i).getPositionY() >= 640) {
 				this.removeChild(bad.get(i));
 				bad.remove(i);
 				i--;
@@ -146,9 +139,10 @@ public class Prototype extends Game {
 		}
 		
 		/******* MAKE OBJECTS FALL FASTER EVERY 60 FRAMES ******/
+		//capped at... 20???
 		//precision for timing of first speed boost will be off but who cares????
 		vCounter++;
-		if (vCounter >= 60) {
+		if (vCounter >= 60 && currentVY < 20) {
 			currentVY++;
 			vCounter = 0;
 		}
@@ -250,6 +244,11 @@ public class Prototype extends Game {
 
 		g.drawString(health, 15, 20);
 		g.drawString(points, 15, 40);
+		
+		if (healthVal <= 0) {
+			g.drawString("You Died", 400, 350);
+			this.stop();
+		}
 		
 		/* Same, just check for null in case a frame gets thrown in before trump is initialized */
 		if(trump != null) trump.draw(g);
