@@ -127,11 +127,20 @@ public class BossBattlePrototype extends Game {
 			
 		}
 		
+		
+		/**
+		 *  There is currently a weird bug where if you keep pressing space
+		 *  rapidly the bullet disconnects from link
+		 */
+		
+		
+		
+		
 		// This is a little wonky maybe
 		/** RESPAWN BULLET **/
 		if(!TweenJuggler.getInstance().getTweens().contains(bulletY) && bullet.getPositionY() <= -128){
-			int i = TweenJuggler.getInstance().getTweens().indexOf(bulletY);
-			TweenJuggler.getInstance().getTweens().remove(i);
+//			int i = TweenJuggler.getInstance().getTweens().indexOf(bulletY);
+//			TweenJuggler.getInstance().getTweens().remove(i);
 			this.removeChild(bullet);
 			link.addChild(bullet);
 			bullet.setPositionY(link.getPositionY());
