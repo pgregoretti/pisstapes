@@ -40,9 +40,7 @@ public class Prototype extends Game {
 	Random randomNum = new Random();
 	
 	int healthVal = 100;
-	String health = "Health: " + healthVal;
 	int pointVal = 0;
-	String points = "Points: " + pointVal;
 	
 	
 	/**
@@ -83,7 +81,6 @@ public class Prototype extends Game {
 	@Override
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
-		System.out.println("hi");
 		
 		double xPos = trump.getPositionX();
 		double yPos = trump.getPositionY();
@@ -96,9 +93,15 @@ public class Prototype extends Game {
 			good.get(i).setPositionY(good.get(i).getPositionY() + good.get(i).getVY());
 			if (good.get(i).getPositionY() >= 550) {
 				//CHECK FOR COLLISIONS
-				//IF COLLIDE, ADD POINTS
+				if(good.get(i).collidesWith(trump)){
+					//IF COLLIDE, ADD POINTS
+					pointVal++;
+					
+				}
 				//REMOVE FROM DISPLAY TREE
+				this.removeChild(good.get(i));
 				//REMOVE FROM ARRAYLIST
+				good.remove(good.get(i));
 			}
 			if (good.get(i).getPositionY() >= 640) {
 				this.removeChild(good.get(i));
@@ -113,8 +116,15 @@ public class Prototype extends Game {
 			if (bad.get(i).getPositionY() >= 550) {
 				//CHECK FOR COLLISIONS
 				//IF COLLIDE, REMOVE HEALTH
+				if(bad.get(i).collidesWith(trump)){
+					healthVal--;
+					
+				}
 				//REMOVE FROM DISPLAY TREE
+				this.removeChild(bad.get(i));
+				
 				//REMOVE FROM ARRAYLIST
+				bad.remove(bad.get(i));
 			}
 			if (bad.get(i).getPositionY() >= 640) {
 				this.removeChild(bad.get(i));
@@ -221,8 +231,22 @@ public class Prototype extends Game {
 	@Override
 	public void draw(Graphics g){
 		super.draw(g);
+		
+		//draw out hitboxes for testing purposes
+		for(int i =0; i<this.getChildren().size(); i++){
+			int currentX = (int) this.getChild(i).getPositionX();
+			int currentY = (int) this.getChild(i).getPositionY();
+			int currentWidth = (int) (this.getChild(i).getUnscaledWidth() * this.getChild(i).getScaleX());
+			int currentHeight = (int) (this.getChild(i).getUnscaledHeight() * this.getChild(i).getScaleY());
+			g.drawRect(currentX, currentY, currentWidth, currentHeight);
+		}
+		
 		g.drawRect(0, 0, 200, 700);
 		g.drawRect(200, 0, 400, 700);
+
+		String health = "Health: " + healthVal;
+		String points = "Points: " + pointVal;
+
 
 		g.drawString(health, 15, 20);
 		g.drawString(points, 15, 40);
