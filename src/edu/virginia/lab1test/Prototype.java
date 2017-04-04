@@ -34,6 +34,7 @@ public class Prototype extends Game {
 	int currentTimerBad = 0;
 	int futureTimerGood = 0;
 	int futureTimerBad = 0;
+	int level = 1;
 	int currentVY = 1; //will get faster every 60 frames;
 	int vCounter = 0;
 	//HOW MANY COUNTERS DO WE NEED??? IS THERE A BETTER WAY TO DO THIS
@@ -41,6 +42,9 @@ public class Prototype extends Game {
 	
 	int healthVal = 100;
 	int pointVal = 0;
+	int timeVal = 1000;
+
+	//This value is the break between levels 
 	
 	
 	/**
@@ -54,7 +58,7 @@ public class Prototype extends Game {
 		//0 TO 200 IS THE "SCOREBOARD"
 		//200 TO 600 IS THE GAME SCREEN
 		//BOUNDS TO CHECK FOR--ITEMS SHOULD ONLY GENERATE BETWEEN 200 < X < 600
-
+		
 		
 		/******* ADD SPRITES *******/
 		this.addChild(trump);
@@ -71,6 +75,7 @@ public class Prototype extends Game {
 		/******* ADD SOUNDS *******/
 		
 		
+		
 	}
 	
 	
@@ -80,6 +85,7 @@ public class Prototype extends Game {
 	 * */
 	@Override
 	public void update(ArrayList<String> pressedKeys) {
+		timeVal--;
 		super.update(pressedKeys);
 		
 		double xPos = trump.getPositionX();
@@ -240,15 +246,27 @@ public class Prototype extends Game {
 
 		String health = "Health: " + healthVal;
 		String points = "Points: " + pointVal;
+		String time = "Time Remaining: " + timeVal/100;
 
 
 		g.drawString(health, 15, 20);
 		g.drawString(points, 15, 40);
+		g.drawString(time, 15, 60);
+		g.drawString("Level: " + level, 15, 80);
 		
 		if (healthVal <= 0) {
 			g.drawString("You Died", 400, 350);
 			this.stop();
 		}
+	
+		if(timeVal <= 0){
+			g.drawString("Level Ended", 400, 350);
+			g.drawString("Final Score: " + pointVal, 400, 370);
+			this.stop();
+
+			
+		}
+		
 		
 		/* Same, just check for null in case a frame gets thrown in before trump is initialized */
 		if(trump != null) trump.draw(g);
