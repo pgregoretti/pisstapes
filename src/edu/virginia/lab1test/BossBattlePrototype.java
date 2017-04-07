@@ -41,8 +41,6 @@ public class BossBattlePrototype extends Game {
 	Sprite fireball = new Sprite("fireball", "fireball.png");
 	Tween fireballY = new Tween(fireball);
 	
-	EventDispatcher coinDispatcher = new EventDispatcher();
-	QuestManager myQuestManager = new QuestManager();
 	static SoundManager sound = new SoundManager();
 	
 	String winner = "";
@@ -56,7 +54,6 @@ public class BossBattlePrototype extends Game {
 		/******* CREATE GAME *******/
 		super("BOSS BATTLE PROTOTYPE", 1000, 700);
 		
-		coinDispatcher.addEventListener(myQuestManager, "rupee");
 		
 		/******* ADD SPRITES *******/
 		link.addChild(bullet);
