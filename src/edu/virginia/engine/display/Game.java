@@ -141,11 +141,10 @@ public class Game extends DisplayObjectContainer implements ActionListener, KeyL
 			/* Draw everything on the screen */
 			this.draw(g);
 		} catch (Exception e) {
-			//System.out
-				//	.println("Exception in nextFrame of game. Stopping game (no frames will be drawn anymore");
+			System.out.println("Exception in nextFrame of game. Stopping game (no frames will be drawn anymore");
 			stop();
-		//	e.printStackTrace();
-			System.out.print("This is working.  Everything is fine.");
+			e.printStackTrace();
+//			System.out.print("This is working.  Everything is fine.");
 		}
 	}
 	

@@ -24,27 +24,30 @@ public class Prototype extends Game {
 
 	Sprite trump = new Sprite("trump", "BoxTrump.jpg");
 	boolean isWalking = false;
+	
 	ArrayList<Sprite> good = new ArrayList();
-	ArrayList<Sprite> bad = new ArrayList();
 	int goodCounter = 0;
-	int badCounter = 0;
 	int frameCounterGood = 0;
-	int frameCounterBad = 0;
 	int currentTimerGood = 0;
-	int currentTimerBad = 0;
 	int futureTimerGood = 0;
+
+	ArrayList<Sprite> bad = new ArrayList();
+	int badCounter = 0;
+	int frameCounterBad = 0;
+	int currentTimerBad = 0;
 	int futureTimerBad = 0;
-	int level = 1;
+	
 	int currentVY = 1; //will get faster every 60 frames;
 	int vCounter = 0;
 	//HOW MANY COUNTERS DO WE NEED??? IS THERE A BETTER WAY TO DO THIS
+	
 	Random randomNum = new Random();
 	
+	int level = 1;	
 	int healthVal = 100;
 	int pointVal = 0;
-	int timeVal = 1000;
-
-	//This value is the break between levels 
+	int timeVal = 3600;
+	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
 	/**
@@ -93,48 +96,12 @@ public class Prototype extends Game {
 
 		trump.setPosition(xPos, yPos);
 		
-		/****** DROPPING PHYSICS OF OBJECTS ******/
-		//GOOD OBJECTS
-		for (int i = 0; i < good.size(); i++) {
-			good.get(i).setPositionY(good.get(i).getPositionY() + good.get(i).getVY());
-			if (good.get(i).getPositionY() >= 550) {
-				//CHECK FOR COLLISIONS
-				if(good.get(i).collidesWith(trump)){
-					pointVal+=5;
-					this.removeChild(good.get(i));
-					good.remove(i);
-					i--;
-				}
-				
-			} else if (good.get(i).getPositionY() >= 640) {
-				this.removeChild(good.get(i));
-				good.remove(i);
-				i--;
-			}			
-		}
+		/****************************************************************************************
+		 * 
+		 * TRUMP HANDLING
+		 * 
+		 ***************************************************************************************/
 		
-		//BAD OBJECTS
-		for (int i = 0; i < bad.size(); i++) {
-			bad.get(i).setPositionY(bad.get(i).getPositionY() + bad.get(i).getVY());
-			if (bad.get(i).getPositionY() >= 550) {
-				//CHECK FOR COLLISIONS
-				if(bad.get(i).collidesWith(trump)){
-					healthVal-=10;
-					this.removeChild(bad.get(i));
-					bad.remove(i);
-					i--;
-				}
-				
-			} else if (bad.get(i).getPositionY() >= 640) {
-				this.removeChild(bad.get(i));
-				bad.remove(i);
-				i--;
-			}			
-		}
-		
-		//POWER UP OBJECTS
-		//TODO
-			
 		if(pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_LEFT))) {
 			xPos -= 5;
 			isWalking = true;
@@ -144,16 +111,29 @@ public class Prototype extends Game {
 			isWalking = true;
 		}
 		
-		/******* MAKE OBJECTS FALL FASTER EVERY 60 FRAMES ******/
-		//capped at... 20???
-		//precision for timing of first speed boost will be off but who cares????
-		vCounter++;
-		if (vCounter >= 60 && currentVY < 20) {
-			currentVY++;
-			vCounter = 0;
+		/*************************** BOUNDS CHECKING ***************************/
+		//x goes from 200 to 600
+		if (xPos < 200) {
+			xPos = 200;
+		} else if (xPos > 540) {
+			xPos = 540;
 		}
+		//y goes from 0 to 700
+		if (yPos > 590) {
+			yPos = 590;
+		}
+
+		trump.setPosition(xPos, yPos);
 		
-		/******* GENERATE OBJECTS RANDOMLY ******/
+		
+		/****************************************************************************************
+		 * 
+		 * OBJECT HANDLING
+		 * 
+		 ***************************************************************************************/
+		
+		
+		/*************************** GENERATE OBJECTS RANDOMLY ***************************/
 		//GOOD OBJECTS
 		if (frameCounterGood == currentTimerGood) {
 			//generate new good object
@@ -202,19 +182,58 @@ public class Prototype extends Game {
 		//TODO
 		
 		
-		/**** BOUNDS CHECKING ****/
-		//x goes from 200 to 600
-		if (xPos < 200) {
-			xPos = 200;
-		} else if (xPos > 540) {
-			xPos = 540;
+		/*************************** DROPPING PHYSICS OF OBJECTS ***************************/
+		//GOOD OBJECTS
+		for (int i = 0; i < good.size(); i++) {
+			good.get(i).setPositionY(good.get(i).getPositionY() + good.get(i).getVY());
+			if (good.get(i).getPositionY() >= 550) {
+				//CHECK FOR COLLISIONS
+				if(good.get(i).collidesWith(trump)){
+					pointVal+=5;
+					this.removeChild(good.get(i));
+					good.remove(i);
+					i--;
+				}
+				
+			} else if (good.get(i).getPositionY() >= 640) {
+				this.removeChild(good.get(i));
+				good.remove(i);
+				i--;
+			}			
 		}
-		//y goes from 0 to 700
-		if (yPos > 590) {
-			yPos = 590;
+		
+		//BAD OBJECTS
+		for (int i = 0; i < bad.size(); i++) {
+			bad.get(i).setPositionY(bad.get(i).getPositionY() + bad.get(i).getVY());
+			if (bad.get(i).getPositionY() >= 550) {
+				//CHECK FOR COLLISIONS
+				if(bad.get(i).collidesWith(trump)){
+					healthVal-=10;
+					this.removeChild(bad.get(i));
+					bad.remove(i);
+					i--;
+				}
+				
+			} else if (bad.get(i).getPositionY() >= 640) {
+				this.removeChild(bad.get(i));
+				bad.remove(i);
+				i--;
+			}			
+		}
+		
+		//POWER UP OBJECTS
+		//TODO
+		
+		
+		/*************************** MAKE OBJECTS FALL FASTER EVERY 60 FRAMES ***************************/
+		//capped at... 20???
+		//precision for timing of first speed boost will be off but who cares????
+		vCounter++;
+		if (vCounter >= 60 && currentVY < 20) {
+			currentVY++;
+			vCounter = 0;
 		}
 
-		trump.setPosition(xPos, yPos);
 		
 		//reset iswalking
 		isWalking = false;
@@ -246,17 +265,18 @@ public class Prototype extends Game {
 
 		String health = "Health: " + healthVal;
 		String points = "Points: " + pointVal;
-		String time = "Time Remaining: " + timeVal/100;
+		String time = "Time Remaining: " + Math.floor(timeVal/60);
 
 
-		g.drawString(health, 15, 20);
-		g.drawString(points, 15, 40);
-		g.drawString(time, 15, 60);
-		g.drawString("Level: " + level, 15, 80);
+		g.drawString("Level: " + level, 15, 20);
+		g.drawString(time, 15, 40);
+		g.drawString(health, 15, 60);
+		g.drawString(points, 15, 80);
 		
 		if (healthVal <= 0) {
 			g.drawString("You Died", 400, 350);
 			this.stop();
+			
 		}
 	
 		if(timeVal <= 0){
