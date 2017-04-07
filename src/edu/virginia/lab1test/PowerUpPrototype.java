@@ -44,6 +44,8 @@ public class PowerUpPrototype extends Game {
 	int futureTimerPower = 0;
 	
 	int currentVY = 1; //will get faster every 60 frames;
+	int oldVY = 1;
+	int newVY = 1;
 	int vCounter = 0;
 	//HOW MANY COUNTERS DO WE NEED??? IS THERE A BETTER WAY TO DO THIS
 	
@@ -51,11 +53,14 @@ public class PowerUpPrototype extends Game {
 	
 	int level = 1;	
 	int healthVal = 100;
-	boolean invulnerable = false;
-	double invulnerableTimer = 300;
 	int pointVal = 0;
 	int timeVal = 3600;
 	//1 min per level - 60 fps * 60 sec = 3600
+	
+	boolean invulnerable = false;
+	double invulnerableTimer = 300;
+	boolean slowDown = false;
+	double slowDownTimer = 300;
 	
 	
 	/**
@@ -270,14 +275,17 @@ public class PowerUpPrototype extends Game {
 				if(power.get(i).collidesWith(trump)){
 					if(power.get(i).getId().contains("Kiss")){
 						System.out.println("Trump was kissed by Ivanka");
-						if(healthVal<100){
-							healthVal+=10;
+						if(!slowDown){
+							slowDown = true;
 						}
 						this.removeChild(power.get(i));
 						power.remove(i);
 						i--;
 					} else if(power.get(i).getId().contains("Meatloaf")){
 						System.out.println("Trump ate meatloaf with Chris Christie");
+						if(healthVal<100){
+							healthVal+=10;
+						}
 						this.removeChild(power.get(i));
 						power.remove(i);
 						i--;
@@ -303,19 +311,36 @@ public class PowerUpPrototype extends Game {
 		/*************************** MAKE OBJECTS FALL FASTER EVERY 60 FRAMES ***************************/
 		//capped at... 20???
 		//precision for timing of first speed boost will be off but who cares????
+		
+		oldVY = currentVY;
+		if(slowDown){
+			//oldVY = currentVY;
+			currentVY = 1;
+		} else {
+			currentVY = oldVY;
+		}
+		
 		vCounter++;
 		if (vCounter >= 60 && currentVY < 20) {
 			currentVY++;
 			vCounter = 0;
 		}
 		
-		/*************************** INVULNERABLITY COUNTER ***************************/
+		/*************************** INVULNERABLITY & SLOW DOWN COUNTER ***************************/
 		if(invulnerable && invulnerableTimer > 0){
 			invulnerableTimer--;
-			System.out.println("Timer: " + Double.toString(invulnerableTimer));
+			//System.out.println("Timer: " + Double.toString(invulnerableTimer));
 		} else {
 			invulnerable = false;
 			invulnerableTimer = 300;
+		}
+		
+		if(slowDown && slowDownTimer > 0){
+			slowDownTimer--;
+			//System.out.println("Timer: " + Double.toString(invulnerableTimer));
+		} else {
+			slowDown = false;
+			slowDownTimer = 300;
 		}
 
 		
@@ -359,12 +384,20 @@ public class PowerUpPrototype extends Game {
 		}
 		
 
+		String sd = "dummystring";
+		if(slowDown){
+			sd = "Slowing down for: " + Math.floor(invulnerableTimer/60);
+		} else {
+			sd = "Items falling at normal speed";
+		}
+		
 
 		g.drawString("Level: " + level, 15, 20);
 		g.drawString(time, 15, 40);
 		g.drawString(health, 15, 60);
 		g.drawString(points, 15, 80);
 		g.drawString(invul, 15, 100);
+		g.drawString(sd, 15, 120);
 		
 		if (healthVal <= 0) {
 			g.drawString("You Died", 400, 350);
