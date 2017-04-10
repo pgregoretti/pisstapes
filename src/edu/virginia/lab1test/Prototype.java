@@ -29,21 +29,30 @@ public class Prototype extends Game {
 	int goodCounter = 0;
 	int frameCounterGood = 0;
 	int currentTimerGood = 0;
-	int futureTimerGood = 0;
 
 	ArrayList<Sprite> bad = new ArrayList();
 	int badCounter = 0;
 	int frameCounterBad = 0;
 	int currentTimerBad = 0;
-	int futureTimerBad = 0;
-	
-	int currentVY = 1; //will get faster every 60 frames;
-	int vCounter = 0;
 	//HOW MANY COUNTERS DO WE NEED??? IS THERE A BETTER WAY TO DO THIS
 	
 	Random randomNum = new Random();
 	
 	int level = 1;	
+	int[] goodGeneration = {0, 90, 120, 120};
+	//goodGeneration[level]
+	int[] badGeneration = {0, 180, 120, 120};
+	
+	int currentVY = 1; 
+	int[] vThresh = {0, 120, 100, 90}; //will get faster every x amount of frames;
+	int[] vCap = {0, 10, 15, 20};
+	int vCounter = 0; //to count which frame we're on
+	
+	
+	String levelMessage = "";
+	boolean levelLimbo = false;
+	int limboTimer = 0;
+	
 	int healthVal = 100;
 	int pointVal = 0;
 	int timeVal = 3600;
@@ -88,155 +97,179 @@ public class Prototype extends Game {
 	 * */
 	@Override
 	public void update(ArrayList<String> pressedKeys) {
-		timeVal--;
-		super.update(pressedKeys);
-		
-		double xPos = trump.getPositionX();
-		double yPos = trump.getPositionY();
-
-		trump.setPosition(xPos, yPos);
-		
-		/****************************************************************************************
-		 * 
-		 * TRUMP HANDLING
-		 * 
-		 ***************************************************************************************/
-		
-		if(pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_LEFT))) {
-			xPos -= 5;
-			isWalking = true;
-		}
-		if (pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_RIGHT))) {
-			xPos += 5;
-			isWalking = true;
-		}
-		
-		/*************************** BOUNDS CHECKING ***************************/
-		//x goes from 200 to 600
-		if (xPos < 200) {
-			xPos = 200;
-		} else if (xPos > 540) {
-			xPos = 540;
-		}
-		//y goes from 0 to 700
-		if (yPos > 590) {
-			yPos = 590;
-		}
-
-		trump.setPosition(xPos, yPos);
-		
-		
-		/****************************************************************************************
-		 * 
-		 * OBJECT HANDLING
-		 * 
-		 ***************************************************************************************/
-		
-		
-		/*************************** GENERATE OBJECTS RANDOMLY ***************************/
-		//GOOD OBJECTS
-		if (frameCounterGood == currentTimerGood) {
-			//generate new good object
-			good.add(new Sprite("good" + goodCounter, "BoxGood.jpg"));
-			//generate a random x position between 200 and 600 (including bounds)
-			good.get(good.size() - 1).setPosition(randomNum.nextInt(560 - 200 + 1) + 200, 0);
-			//turn on physics for this object
-			good.get(good.size() - 1).setPhysics(true);
-			good.get(good.size() - 1).setVY(currentVY);
-			//add to display tree
-			this.addChild(good.get(good.size() - 1));
+		if (!levelLimbo) {
+			super.update(pressedKeys);
+			timeVal--;
 			
-			//increment goodCounter (kind of like an item ID)
-			goodCounter++;
-			currentTimerGood = futureTimerGood;
-			//a good object will generate between 0 to 90 frames
-			futureTimerGood = randomNum.nextInt(90);
-			frameCounterGood = 0;
-		} else {
-			frameCounterGood++;
-		}
-		
-		//BAD OBJECTS
-		if (frameCounterBad == currentTimerBad) {
-			//generate new bad object
-			bad.add(new Sprite("bad" + badCounter, "BoxBad.jpg"));
-			//generate a random x position between 200 and 600 (including bounds)
-			bad.get(bad.size() - 1).setPosition(randomNum.nextInt(560 - 200 + 1) + 200, 0);
-			//turn on physics for this object
-			bad.get(bad.size() - 1).setPhysics(true);
-			bad.get(bad.size() - 1).setVY(currentVY);
-			//add to display tree
-			this.addChild(bad.get(bad.size() - 1));
+			if (timeVal <= 0 && !levelLimbo){
+				level++;
+				levelLimbo = true;
+			}
 			
-			//increment badCounter (kind of like an item ID)
-			badCounter++;
-			currentTimerBad = futureTimerBad;
-			//a bad object will generate between 0 to 90 frames
-			futureTimerBad = randomNum.nextInt(90);
-			frameCounterBad = 0;
-		} else {
-			frameCounterBad++;
-		}
-		
-		//POWER UP OBJECTS
-		//TODO
-		
-		
-		/*************************** DROPPING PHYSICS OF OBJECTS ***************************/
-		//GOOD OBJECTS
-		for (int i = 0; i < good.size(); i++) {
-			good.get(i).setPositionY(good.get(i).getPositionY() + good.get(i).getVY());
-			if (good.get(i).getPositionY() >= 550) {
-				//CHECK FOR COLLISIONS
-				if(good.get(i).collidesWith(trump)){
-					pointVal+=5;
+			double xPos = trump.getPositionX();
+			double yPos = trump.getPositionY();
+
+			trump.setPosition(xPos, yPos);
+			
+			/****************************************************************************************
+			 * 
+			 * TRUMP HANDLING
+			 * 
+			 ***************************************************************************************/
+			
+			if(pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_LEFT))) {
+				xPos -= 5;
+				isWalking = true;
+			}
+			if (pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_RIGHT))) {
+				xPos += 5;
+				isWalking = true;
+			}
+			
+			/*************************** BOUNDS CHECKING ***************************/
+			//x goes from 200 to 600
+			if (xPos < 200) {
+				xPos = 200;
+			} else if (xPos > 540) {
+				xPos = 540;
+			}
+			//y goes from 0 to 700
+			if (yPos > 590) {
+				yPos = 590;
+			}
+
+			trump.setPosition(xPos, yPos);
+			
+			
+			/****************************************************************************************
+			 * 
+			 * OBJECT HANDLING
+			 * 
+			 ***************************************************************************************/
+			
+			
+			/*************************** GENERATE OBJECTS RANDOMLY ***************************/
+			//GOOD OBJECTS
+			if (frameCounterGood == currentTimerGood) {
+				//generate new good object
+				good.add(new Sprite("good" + goodCounter, "BoxGood.jpg"));
+				//generate a random x position between 200 and 600 (including bounds)
+				good.get(good.size() - 1).setPosition(randomNum.nextInt(560 - 200 + 1) + 200, 0);
+				//turn on physics for this object
+				good.get(good.size() - 1).setPhysics(true);
+				good.get(good.size() - 1).setVY(currentVY);
+				//add to display tree
+				this.addChild(good.get(good.size() - 1));
+				
+				//increment goodCounter (kind of like an item ID)
+				goodCounter++;
+				//a good object will generate between 0 to 90 frames
+				currentTimerGood = randomNum.nextInt(goodGeneration[level]);
+				frameCounterGood = 0;
+			} else {
+				frameCounterGood++;
+			}
+			
+			//BAD OBJECTS
+			if (frameCounterBad == currentTimerBad) {
+				//generate new bad object
+				bad.add(new Sprite("bad" + badCounter, "BoxBad.jpg"));
+				//generate a random x position between 200 and 600 (including bounds)
+				bad.get(bad.size() - 1).setPosition(randomNum.nextInt(560 - 200 + 1) + 200, 0);
+				//turn on physics for this object
+				bad.get(bad.size() - 1).setPhysics(true);
+				bad.get(bad.size() - 1).setVY(currentVY);
+				//add to display tree
+				this.addChild(bad.get(bad.size() - 1));
+				
+				//increment badCounter (kind of like an item ID)
+				badCounter++;
+				//a bad object will generate between 0 to 90 frames
+				currentTimerBad = randomNum.nextInt(badGeneration[level]);
+				frameCounterBad = 0;
+			} else {
+				frameCounterBad++;
+			}
+			
+			//POWER UP OBJECTS
+			//TODO
+			
+			
+			/*************************** DROPPING PHYSICS OF OBJECTS ***************************/
+			//GOOD OBJECTS
+			for (int i = 0; i < good.size(); i++) {
+				good.get(i).setPositionY(good.get(i).getPositionY() + good.get(i).getVY());
+				if (good.get(i).getPositionY() >= 550) {
+					//CHECK FOR COLLISIONS
+					if(good.get(i).collidesWith(trump)){
+						pointVal+=5;
+						this.removeChild(good.get(i));
+						good.remove(i);
+						i--;
+					}
+					
+				} else if (good.get(i).getPositionY() >= 640) {
 					this.removeChild(good.get(i));
 					good.remove(i);
 					i--;
-				}
-				
-			} else if (good.get(i).getPositionY() >= 640) {
-				this.removeChild(good.get(i));
-				good.remove(i);
-				i--;
-			}			
-		}
-		
-		//BAD OBJECTS
-		for (int i = 0; i < bad.size(); i++) {
-			bad.get(i).setPositionY(bad.get(i).getPositionY() + bad.get(i).getVY());
-			if (bad.get(i).getPositionY() >= 550) {
-				//CHECK FOR COLLISIONS
-				if(bad.get(i).collidesWith(trump)){
-					healthVal-=10;
+				}			
+			}
+			
+			//BAD OBJECTS
+			for (int i = 0; i < bad.size(); i++) {
+				bad.get(i).setPositionY(bad.get(i).getPositionY() + bad.get(i).getVY());
+				if (bad.get(i).getPositionY() >= 550) {
+					//CHECK FOR COLLISIONS
+					if(bad.get(i).collidesWith(trump)){
+						healthVal-=10;
+						this.removeChild(bad.get(i));
+						bad.remove(i);
+						i--;
+					}
+					
+				} else if (bad.get(i).getPositionY() >= 640) {
 					this.removeChild(bad.get(i));
 					bad.remove(i);
 					i--;
-				}
-				
-			} else if (bad.get(i).getPositionY() >= 640) {
-				this.removeChild(bad.get(i));
-				bad.remove(i);
-				i--;
-			}			
-		}
-		
-		//POWER UP OBJECTS
-		//TODO
-		
-		
-		/*************************** MAKE OBJECTS FALL FASTER EVERY 60 FRAMES ***************************/
-		//capped at... 20???
-		//precision for timing of first speed boost will be off but who cares????
-		vCounter++;
-		if (vCounter >= 60 && currentVY < 20) {
-			currentVY++;
-			vCounter = 0;
-		}
+				}			
+			}
+			
+			//POWER UP OBJECTS
+			//TODO
+			
+			
+			/*************************** MAKE OBJECTS FALL FASTER EVERY 60 FRAMES ***************************/
+			//capped at... vCap???
+			//precision for timing of first speed boost will be off but who cares????
+			vCounter++;
+			if (vCounter >= vThresh[level] && currentVY < vCap[level]) {
+				currentVY++;
+				vCounter = 0;
+			}
 
-		
-		//reset iswalking
-		isWalking = false;
+			
+			//reset iswalking
+			isWalking = false;
+		} else {
+			limboTimer++;
+			//0 to 180 and then 180 to 360
+			if (limboTimer < 180 && limboTimer > 0) {
+				levelMessage = "End of Level | Final Score: " + pointVal;
+			} else if (limboTimer < 360 && limboTimer > 180) {
+				levelMessage = "Starting Level " + level;
+			} else if (limboTimer > 360) {
+				//get out of limbo
+				levelLimbo = false;
+				//reset limbo timer
+				limboTimer = 0;
+				//reset level timer
+				timeVal = 3600;
+				//reset player health
+				healthVal = 100;
+				//reset object velocity
+				currentVY = 1;
+			}
+		}
 		
 		
 		/* Make sure trump is not null. Sometimes Swing can auto cause an extra frame to go before everything is initialized */
@@ -278,13 +311,9 @@ public class Prototype extends Game {
 			this.stop();
 			
 		}
-	
-		if(timeVal <= 0){
-			g.drawString("Level Ended", 400, 350);
-			g.drawString("Final Score: " + pointVal, 400, 370);
-			this.stop();
-
-			
+		
+		if (levelLimbo) {
+			g.drawString(levelMessage, 400, 350);
 		}
 		
 		
