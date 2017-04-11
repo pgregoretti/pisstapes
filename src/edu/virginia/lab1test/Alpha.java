@@ -19,6 +19,7 @@ public class Alpha extends Game {
 	Sprite trump = new Sprite("trump", "BoxTrump.jpg");
 	boolean isWalking = false;
 	
+	/*************************** BASIC LEVEL VARIABLES ***************************/
 	ArrayList<Sprite> good = new ArrayList<Sprite>();
 	int goodCounter = 0;
 	int frameCounterGood = 0;
@@ -29,14 +30,40 @@ public class Alpha extends Game {
 	int frameCounterBad = 0;
 	int currentTimerBad = 0;
 	
-	ArrayList<Sprite> power = new ArrayList();
+	ArrayList<Sprite> power = new ArrayList<Sprite>();
 	int powerCounter = 0;
 	int frameCounterPower = 0;
 	int currentTimerPower = 0;
-
 	
 	Random randomNum = new Random();
 	
+	
+	/*************************** BOSS LEVEL VARIABLES ***************************/
+	Random hillaryRandom = new Random();
+	int tempX;
+	int hilTimer = 60;
+	
+	Sprite hillary = new Sprite("hillary" , "BoxHillary.jpg");
+	Tween hillaryX = new Tween(hillary);
+
+	ArrayList<Sprite> bullet = new ArrayList<Sprite>();
+	int bulletCounter = 0;
+	
+	ArrayList<Sprite> fireball = new ArrayList<Sprite>();
+	int fireballCounter = 0;
+	int frameCounterFB = 0;
+	int currentTimerFB = 0;
+	
+	int hilHealthVal = 100;
+	int numBullets = 0;
+	int bulletVY = 10;
+	int fireballVY = 15;
+	
+	int victory = 0;
+	//0 = still playing, 1 = win!, -1 = lose!
+	
+	
+	/*************************** LEVEL SWITCHING VARIABLES ***************************/
 	int level = 1;	
 	//randomNum = rand.nextInt((max - min) + 1) + min;
 	int[] goodGeneration = {0, 90, 120, 150};
@@ -96,13 +123,20 @@ public class Alpha extends Game {
 		
 		/******* ADD SPRITES *******/
 		this.addChild(trump);
+		this.addChild(hillary);
 		
 		/******* ASSIGN ANIMATIONS *******/
 		
 		/******* POSITION SPRITES *******/
 		trump.setPosition(200, 590);
+		//set hillary off screen
+		hillary.setPosition(610, 50);
 		
 		/******* SETUP TWEENS *******/
+		//hillary goes from x = 250 to 490
+		tempX = hillaryRandom.nextInt((490 - 250) + 1) + 250;
+		System.out.println("Hillary is travelling to " + Integer.toString(tempX));
+		hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 125);
 		
 		/******* ADD TWEENS *******/
 		
@@ -119,6 +153,7 @@ public class Alpha extends Game {
 	 * */
 	@Override
 	public void update(ArrayList<String> pressedKeys) {
+		System.out.println(bullet.size());
 		super.update(pressedKeys);
 		double xPos = trump.getPositionX();
 		double yPos = trump.getPositionY();
@@ -154,7 +189,45 @@ public class Alpha extends Game {
 		
 		if (level == 5) {
 			this.stop();
-		}
+		} else if (level < 4) {
+			timeVal--;
+			if (timeVal <= 0) {
+				timeVal = 0;
+			}
+			
+			//update Trump's bullet inventory
+			numBullets = pointVal/10;
+			
+			if (timeVal <= 0 && !levelLimbo){
+				level++;
+				
+				//reset objects
+				for (int i = 0; i < good.size(); i++) {
+					//remove from disp tree
+					this.removeChild(good.get(i));
+				}
+				for (int i = 0; i < bad.size(); i++) {
+					//remove from disp tree
+					this.removeChild(bad.get(i));
+				}
+				for (int i = 0; i < power.size(); i++) {
+					//remove from disp tree
+					this.removeChild(power.get(i));
+				}
+				//clear arraylists
+				good.clear();
+				bad.clear();
+				power.clear();
+				
+				//reset PU status messages
+				invul = "";
+				sd = "";
+				
+				//begin limbo
+				levelLimbo = true;
+			}
+		}		
+		
 		
 		if (!levelLimbo) {
 			if (level == 4) {
@@ -163,39 +236,94 @@ public class Alpha extends Game {
 				 *
 				 * COMMENCING BOSS BATTLE
 				 * 
-				 *****************************************************************************************
+				 ****************************************************************************************
 				 ***************************************************************************************/
-			} else if (level < 4){
-				timeVal--;
 				
-				if (timeVal <= 0 && !levelLimbo){
-					level++;
+				//Make hil visible
+				hillary.setVisible(true);
+				
+				/*************************** HILLARY'S RANDOM PATH ***************************/
+				if(!TweenJuggler.getInstance().getTweens().contains(hillaryX)){
+					/** X TWEEN **/
+					int prevX = tempX;
+					tempX = hillaryRandom.nextInt((490 - 250) + 1) + 250;
+					hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 125);
+					TweenJuggler.getInstance().add(hillaryX);
 					
-					//reset objects
-					for (int i = 0; i < good.size(); i++) {
-						//remove from disp tree
-						this.removeChild(good.get(i));
-					}
-					for (int i = 0; i < bad.size(); i++) {
-						//remove from disp tree
-						this.removeChild(bad.get(i));
-					}
-					for (int i = 0; i < power.size(); i++) {
-						//remove from disp tree
-						this.removeChild(power.get(i));
-					}
-					//clear arraylists
-					good.clear();
-					bad.clear();
-					power.clear();
-					
-					//reset PU status messages
-					invul = "";
-					sd = "";
-					
-					//begin limbo
-					levelLimbo = true;
+					/** DEBUGGER MESSAGES **/
+					System.out.println("Hillary is travelling from " + Integer.toString(prevX) + " to " 
+							+ Integer.toString(tempX));
 				}
+				
+				
+				/*************************** GENERATE FIREBALLS RANDOMLY ***************************/
+				//FIREBALL OBJECTS
+				if (frameCounterFB == currentTimerFB) {
+					//generate new fireball object
+					fireball.add(new Sprite("fireball" + fireballCounter, "BoxBad.jpg"));
+					//set fireball to hil's position
+					fireball.get(fireball.size() - 1).setPosition(hillary.getPositionX(), hillary.getPositionY());
+					//turn on physics for this object
+					fireball.get(fireball.size() - 1).setPhysics(true);
+					//generate an object with a velocity of currentVY
+					fireball.get(fireball.size() - 1).setVY(fireballVY);
+					//add to display tree
+					this.addChild(fireball.get(fireball.size() - 1));
+					
+					//increment fireballCounter (kind of like an item ID)
+					fireballCounter++;
+					//a fireball object will generate between 0 to 180 frames
+					currentTimerFB = randomNum.nextInt(180);
+					frameCounterFB = 0;
+				} else {
+					frameCounterFB++;
+				}
+				
+				/*************************** SHOOTING PHYSICS OF BULLET ***************************/
+				/*************************** AND COLLISION OF BULLET ***************************/
+				//only need to check for collisions on bullet past y <= 50
+
+				for (int i = 0; i < bullet.size(); i++) {
+					bullet.get(i).setPositionY(bullet.get(i).getPositionY() - bullet.get(i).getVY());
+					if (bullet.get(i).getPositionY() <= 50) {
+						//CHECK FOR COLLISIONS
+						if(bullet.get(i).collidesWith(hillary)){
+							hilHealthVal -= 10;
+							this.removeChild(bullet.get(i));
+							bullet.remove(i);
+							i--;
+						} else if (bullet.get(i).getPositionY() <= 0) { //else bullet went up off screen
+							this.removeChild(bullet.get(i));
+							bullet.remove(i);
+							i--;
+						}	
+					} 		
+				}
+				
+				/*************************** DROPPING PHYSICS OF FIREBALL ***************************/
+				/*************************** AND COLLISION OF FIREBALL ***************************/
+				//only need to check for collisions on objects past y = 550
+				for (int i = 0; i < fireball.size(); i++) {
+					fireball.get(i).setPositionY(fireball.get(i).getPositionY() + fireball.get(i).getVY());
+					if (fireball.get(i).getPositionY() >= 550) {
+						//CHECK FOR COLLISIONS
+						if(fireball.get(i).collidesWith(trump)){
+							healthVal-=10;
+							this.removeChild(fireball.get(i));
+							fireball.remove(i);
+							i--;
+						} else if (fireball.get(i).getPositionY() >= 640) {
+							this.removeChild(fireball.get(i));
+							fireball.remove(i);
+							i--;
+						}				
+					} 		
+				}
+				
+				
+				
+			} else if (level < 4){
+				
 				/****************************************************************************************
 				 ****************************************************************************************
 				 *
@@ -266,11 +394,11 @@ public class Alpha extends Game {
 				if (frameCounterPower == currentTimerPower) {
 					//generate new PU object
 					if (powerUpNum == 0) {
-						power.add(new Sprite("powerKiss" + powerCounter, "KissBox.png"));
+						power.add(new Sprite("powerKiss" + powerCounter, "BoxKiss.png"));
 					} else if (powerUpNum == 1) {
-						power.add(new Sprite("powerMeatloaf" + powerCounter, "MeatloafBox.png"));
+						power.add(new Sprite("powerMeatloaf" + powerCounter, "BoxMeatloaf.png"));
 					} else if (powerUpNum == 2) {
-						power.add(new Sprite("powerTacoSalad" + powerCounter, "TacoSaladBox.png"));
+						power.add(new Sprite("powerTacoSalad" + powerCounter, "BoxTacoSalad.png"));
 					}
 					
 					//generate a random x position between 200 and 600 (including bounds)
@@ -307,13 +435,12 @@ public class Alpha extends Game {
 							this.removeChild(good.get(i));
 							good.remove(i);
 							i--;
+						} else if (good.get(i).getPositionY() >= 640) {
+							this.removeChild(good.get(i));
+							good.remove(i);
+							i--;
 						}
-						
-					} else if (good.get(i).getPositionY() >= 640) {
-						this.removeChild(good.get(i));
-						good.remove(i);
-						i--;
-					}			
+					} 		
 				}
 				
 				//BAD OBJECTS
@@ -326,13 +453,12 @@ public class Alpha extends Game {
 							this.removeChild(bad.get(i));
 							bad.remove(i);
 							i--;
+						} else if (bad.get(i).getPositionY() >= 640) {
+							this.removeChild(bad.get(i));
+							bad.remove(i);
+							i--;
 						}
-						
-					} else if (bad.get(i).getPositionY() >= 640) {
-						this.removeChild(bad.get(i));
-						bad.remove(i);
-						i--;
-					}			
+					} 		
 				}
 				
 				//POWER UP OBJECTS
@@ -366,13 +492,12 @@ public class Alpha extends Game {
 								power.remove(i);
 								i--;
 							}
-						}
-						
-					} else if (power.get(i).getPositionY() >= 640) {
-						this.removeChild(power.get(i));
-						power.remove(i);
-						i--;
-					}			
+						} else if (power.get(i).getPositionY() >= 640) {
+							this.removeChild(power.get(i));
+							power.remove(i);
+							i--;
+						}	
+					} 		
 				}
 				
 				
@@ -420,7 +545,7 @@ public class Alpha extends Game {
 				levelMessage = "End of Level | Final Score: " + pointVal;
 			} else if (limboTimer < 360 && limboTimer > 180) {
 				if (level == 4) {
-					levelMessage = "A wild Hillary appeared!";
+					levelMessage = "A wild Hillary appeared! | Trump gathered " + pointVal/10 + " bullets";
 				} else {
 					levelMessage = "Starting Level " + level;
 				}
@@ -461,50 +586,60 @@ public class Alpha extends Game {
 	public void draw(Graphics g){
 		super.draw(g);
 		
-		//draw out hitboxes for testing purposes
-		for(int i =0; i<this.getChildren().size(); i++){
-			int currentX = (int) this.getChild(i).getPositionX();
-			int currentY = (int) this.getChild(i).getPositionY();
-			int currentWidth = (int) (this.getChild(i).getUnscaledWidth() * this.getChild(i).getScaleX());
-			int currentHeight = (int) (this.getChild(i).getUnscaledHeight() * this.getChild(i).getScaleY());
-			g.drawRect(currentX, currentY, currentWidth, currentHeight);
-		}
-		
 		g.drawRect(0, 0, 200, 700);
 		g.drawRect(200, 0, 400, 700);
 
 		String health = "Health: " + healthVal;
-		String points = "Points: " + pointVal;
-		String time = "Time Remaining: " + Math.floor(timeVal/60);
-		
-		if(invulnerable){
-			invul = "Invulnerable for: " + Math.floor(invulnerableTimer/60);
-		} else {
-			invul = "";
-		}
-		
-		if(slowDown){
-			sd = "Slowing down for: " + Math.floor(invulnerableTimer/60);
-		} else {
-			sd = "";
-		}
 
 
-		g.drawString("Level: " + level, 15, 20);
-		g.drawString(time, 15, 40);
-		g.drawString(health, 15, 60);
-		g.drawString(points, 15, 80);
-		g.drawString(invul, 15, 100);
-		g.drawString(sd, 15, 120);
+		if (level < 4) {
+			String points = "Points: " + pointVal;
+			String time = "Time Remaining: " + Math.floor(timeVal/60);
+			
+			if(invulnerable){
+				invul = "Invulnerable for: " + Math.floor(invulnerableTimer/60);
+			} else {
+				invul = "";
+			}
+			
+			if(slowDown){
+				sd = "Slowing down for: " + Math.floor(invulnerableTimer/60);
+			} else {
+				sd = "";
+			}
+			
+			g.drawString("Level: " + level, 15, 20);
+			g.drawString(time, 15, 40);
+			g.drawString(health, 15, 60);
+			g.drawString(points, 15, 80);
+			g.drawString(invul, 15, 100);
+			g.drawString(sd, 15, 120);			
+		} else if (level == 4) {
+			String bullets = "Bullets left: " + numBullets;
+			String hilHealth = "Hillary's Health: " + hilHealthVal;
+			
+			g.drawString(health, 15, 20);
+			g.drawString(bullets, 15, 40);
+			g.drawString(hilHealth, 15, 60);
+		}
 		
 		if (healthVal <= 0) {
 			g.drawString("You Died", 350, 200);
 			this.stop();
-			
+		}
+		
+		if (level >= 4) {
+			if (hilHealthVal <= 0) {
+				g.drawString("You defeated democracy!", 350, 220);
+				this.stop();
+			} else if (numBullets <= 0 && bullet.isEmpty()) {
+				g.drawString("You ran out of bullets.", 350, 220);
+				this.stop();
+			}			
 		}
 		
 		if (levelLimbo) {
-			g.drawString(levelMessage, 275, 200);
+			g.drawString(levelMessage, 250, 200);
 		}
 		
 		
@@ -519,5 +654,35 @@ public class Alpha extends Game {
 	public static void main(String[] args) {
 		Alpha game = new Alpha();
 		game.start();
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e) {
+		super.keyReleased(e);
+		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+			
+			//can only use space in boss fight
+			if (level == 4 && !levelLimbo) {
+				//have bullets left
+				if (numBullets > 0) {
+					numBullets--;
+					/*************************** GENERATE A BULLET ***************************/
+					//generate new bullet object
+					bullet.add(new Sprite("bullet" + bulletCounter, "BoxBullet.jpg"));
+					//set bullet position to trump's position
+					bullet.get(bullet.size() - 1).setPosition(trump.getPositionX(), trump.getPositionY());
+					//turn on physics for this object
+					bullet.get(bullet.size() - 1).setPhysics(true);
+					//set bullet's velocity to the bulletVY
+					bullet.get(bullet.size() - 1).setVY(bulletVY);
+					//add to display tree
+					this.addChild(bullet.get(bullet.size() - 1));
+					
+					//increment bulletCounter (kind of like an item ID)
+					bulletCounter++;					
+				}
+			}
+			
+		}
 	}
 }
