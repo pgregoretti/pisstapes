@@ -25,12 +25,12 @@ public class Prototype extends Game {
 	Sprite trump = new Sprite("trump", "BoxTrump.jpg");
 	boolean isWalking = false;
 	
-	ArrayList<Sprite> good = new ArrayList();
+	ArrayList<Sprite> good = new ArrayList<Sprite>();
 	int goodCounter = 0;
 	int frameCounterGood = 0;
 	int currentTimerGood = 0;
 
-	ArrayList<Sprite> bad = new ArrayList();
+	ArrayList<Sprite> bad = new ArrayList<Sprite>();
 	int badCounter = 0;
 	int frameCounterBad = 0;
 	int currentTimerBad = 0;
