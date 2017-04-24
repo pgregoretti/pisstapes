@@ -431,9 +431,12 @@ public class Beta extends Game {
 				
 				/*************************** GENERATE OBJECTS RANDOMLY ***************************/
 				//GOOD OBJECTS
+				String[] goodImg = {"MAGA.png", "piss.png", "toupee.png"};
 				if (frameCounterGood == currentTimerGood) {
+					int goodNum = randomNum.nextInt(3);
+
 					//generate new good object
-					good.add(new Sprite("good" + goodCounter, "BoxGood.jpg"));
+					good.add(new Sprite("good" + goodCounter, goodImg[goodNum]));
 					//generate a random x position between 200 and 600 (including bounds)
 					good.get(good.size() - 1).setPosition(randomNum.nextInt(560 - 200 + 1) + 200, 0);
 					//turn on physics for this object
@@ -455,8 +458,10 @@ public class Beta extends Game {
 				
 				//BAD OBJECTS
 				if (frameCounterBad == currentTimerBad) {
+					int badNum = randomNum.nextInt(3);
+					String badImg[] = {"imwithehr.png", "constitution.png", "holywater.png"};
 					//generate new bad object
-					bad.add(new Sprite("bad" + badCounter, "BoxBad.jpg"));
+					bad.add(new Sprite("bad" + badCounter, badImg[badNum]));
 					//generate a random x position between 200 and 600 (including bounds)
 					bad.get(bad.size() - 1).setPosition(randomNum.nextInt(560 - 200 + 1) + 200, 0);
 					//turn on physics for this object
