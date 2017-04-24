@@ -16,7 +16,8 @@ import edu.virginia.engine.util.SoundManager;
 
 public class Beta extends Game {
 
-	Sprite trump = new Sprite("trump", "BoxTrump.jpg");
+//	Sprite trump = new Sprite("trump", "BoxTrump.jpg");
+	AnimatedSprite trump = new AnimatedSprite("Trump", "trump-spritesheet.png", 94, 150, 2, 8, 0);
 	boolean isWalking = false;
 	
 	/*************************** BASIC LEVEL VARIABLES ***************************/
@@ -126,9 +127,11 @@ public class Beta extends Game {
 		this.addChild(hillary);
 		
 		/******* ASSIGN ANIMATIONS *******/
+		trump.setAnimation("right", 0, 7);
+		trump.setAnimation("left", 8, 15);
 		
 		/******* POSITION SPRITES *******/
-		trump.setPosition(200, 590);
+		trump.setPosition(350, 530);
 		//set hillary off screen
 		hillary.setPosition(610, 50);
 		
@@ -165,24 +168,24 @@ public class Beta extends Game {
 		 ***************************************************************************************/
 		
 		if(pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_LEFT))) {
-			xPos -= 5;
+			xPos -= 4;
+			if (trump.getAnimation() != "left")
+				trump.animate("left");
 			isWalking = true;
 		}
 		if (pressedKeys.contains(KeyEvent.getKeyText(KeyEvent.VK_RIGHT))) {
-			xPos += 5;
+			xPos += 4;
+			if (trump.getAnimation() != "right")
+				trump.animate("right");
 			isWalking = true;
 		}
 		
 		/*************************** BOUNDS CHECKING ***************************/
-		//x goes from 200 to 600
+		//x goes from 200 to 506
 		if (xPos < 200) {
 			xPos = 200;
-		} else if (xPos > 540) {
-			xPos = 540;
-		}
-		//y goes from 0 to 700
-		if (yPos > 590) {
-			yPos = 590;
+		} else if (xPos > 506) {
+			xPos = 506;
 		}
 
 		trump.setPosition(xPos, yPos);
@@ -302,10 +305,10 @@ public class Beta extends Game {
 				
 				/*************************** DROPPING PHYSICS OF FIREBALL ***************************/
 				/*************************** AND COLLISION OF FIREBALL ***************************/
-				//only need to check for collisions on objects past y = 550
+				//only need to check for collisions on objects past y = 450
 				for (int i = 0; i < fireball.size(); i++) {
 					fireball.get(i).setPositionY(fireball.get(i).getPositionY() + fireball.get(i).getVY());
-					if (fireball.get(i).getPositionY() >= 550) {
+					if (fireball.get(i).getPositionY() >= 450) {
 						//CHECK FOR COLLISIONS
 						if(fireball.get(i).collidesWith(trump)){
 							healthVal-=10;
@@ -423,12 +426,12 @@ public class Beta extends Game {
 				
 				/*************************** DROPPING PHYSICS OF OBJECTS ***************************/
 				/*************************** AND COLLISION OF OBJECTS ***************************/
-				//only need to check for collisions on objects past y = 550
+				//only need to check for collisions on objects past y = 450
 				
 				//GOOD OBJECTS
 				for (int i = 0; i < good.size(); i++) {
 					good.get(i).setPositionY(good.get(i).getPositionY() + good.get(i).getVY());
-					if (good.get(i).getPositionY() >= 550) {
+					if (good.get(i).getPositionY() >= 450) {
 						//CHECK FOR COLLISIONS
 						if(good.get(i).collidesWith(trump)){
 							pointVal+=5;
@@ -446,7 +449,7 @@ public class Beta extends Game {
 				//BAD OBJECTS
 				for (int i = 0; i < bad.size(); i++) {
 					bad.get(i).setPositionY(bad.get(i).getPositionY() + bad.get(i).getVY());
-					if (bad.get(i).getPositionY() >= 550) {
+					if (bad.get(i).getPositionY() >= 450) {
 						//CHECK FOR COLLISIONS
 						if(bad.get(i).collidesWith(trump) && !invulnerable){
 							healthVal-=10;
@@ -464,7 +467,7 @@ public class Beta extends Game {
 				//POWER UP OBJECTS
 				for (int i = 0; i < power.size(); i++) {
 					power.get(i).setPositionY(power.get(i).getPositionY() + power.get(i).getVY());
-					if (power.get(i).getPositionY() >= 550) {
+					if (power.get(i).getPositionY() >= 450) {
 						//CHECK FOR COLLISIONS
 						if(power.get(i).collidesWith(trump)){
 							if(power.get(i).getId().contains("Kiss")){
@@ -571,6 +574,12 @@ public class Beta extends Game {
 			}
 		}
 		
+		if(pressedKeys.size() == 0 || !isWalking) {
+			trump.setPause(true);
+		} else {
+			trump.setPause(false);
+		}
+		
 		//reset iswalking
 		isWalking = false;		
 		
@@ -603,7 +612,7 @@ public class Beta extends Game {
 			}
 			
 			if(slowDown){
-				sd = "Slowing down for: " + Math.floor(invulnerableTimer/60);
+				sd = "Slowing down for: " + Math.floor(slowDownTimer/60);
 			} else {
 				sd = "";
 			}

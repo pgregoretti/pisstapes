@@ -20,7 +20,7 @@ public class AnimatedSprite extends Sprite {
 	private Map<String, Integer> endDict = new HashMap<String, Integer>();
 	private String animation = "";
 	private int count = 0;
-	private int speed = 5;
+	private int speed = 3;
 	private boolean pause = false;
 	
 	

@@ -300,8 +300,8 @@ public class DisplayObject extends EventDispatcher {
 			g2d.drawImage(displayImage, 0, 0,
 					(int) (getUnscaledWidth()),
 					(int) (getUnscaledHeight()), null);
-			g2d.drawOval((int)this.getPivotPointX(), (int)this.getPivotPointY(), 5, 5);
-			g2d.translate(this.getPivotPointX(), this.getPivotPointY());
+//			g2d.drawOval((int)this.getPivotPointX(), (int)this.getPivotPointY(), 5, 5);
+//			g2d.translate(this.getPivotPointX(), this.getPivotPointY());
 			
 			/*
 			 * undo the transformations so this doesn't affect other display
