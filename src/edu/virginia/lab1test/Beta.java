@@ -416,11 +416,11 @@ public class Beta extends Game {
 				if (frameCounterPower == currentTimerPower) {
 					//generate new PU object
 					if (powerUpNum == 0) {
-						power.add(new Sprite("powerKiss" + powerCounter, "BoxKiss.png"));
+						power.add(new Sprite("powerKiss" + powerCounter, "kiss.png"));
 					} else if (powerUpNum == 1) {
-						power.add(new Sprite("powerMeatloaf" + powerCounter, "BoxMeatloaf.png"));
+						power.add(new Sprite("powerMeatloaf" + powerCounter, "meatloaf.png"));
 					} else if (powerUpNum == 2) {
-						power.add(new Sprite("powerTacoSalad" + powerCounter, "BoxTacoSalad.png"));
+						power.add(new Sprite("powerTacoSalad" + powerCounter, "tacosalad.png"));
 					}
 					
 					//generate a random x position between 200 and 600 (including bounds)
