@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
+import edu.virginia.engine.display.DisplayObjectContainer;
 import edu.virginia.engine.display.Sprite;
 import edu.virginia.engine.display.AnimatedSprite;
 import edu.virginia.engine.display.Tween;
@@ -15,10 +16,17 @@ import edu.virginia.engine.util.SoundManager;
 
 
 public class Beta extends Game {
+	
+	boolean restartGame = false;
 
 //	Sprite trump = new Sprite("trump", "BoxTrump.jpg");
 	AnimatedSprite trump = new AnimatedSprite("Trump", "trump-spritesheet.png", 94, 150, 2, 8, 0);
 	boolean isWalking = false;
+	
+	/*************************** BACKGROUND AND SCREEN CONTAINERS ***************************/
+	DisplayObjectContainer background = new DisplayObjectContainer("background");
+	DisplayObjectContainer allobjects = new DisplayObjectContainer("allobjects");
+	DisplayObjectContainer screen = new DisplayObjectContainer("screen");
 	
 	/*************************** BASIC LEVEL VARIABLES ***************************/
 	ArrayList<Sprite> good = new ArrayList<Sprite>();
@@ -123,8 +131,13 @@ public class Beta extends Game {
 		
 		
 		/******* ADD SPRITES *******/
-		this.addChild(trump);
-		this.addChild(hillary);
+		this.addChild(background);
+		this.addChild(allobjects);
+		this.addChild(screen);
+		allobjects.addChild(trump);
+		allobjects.addChild(hillary);
+//		this.addChild(trump);
+//		this.addChild(hillary);
 		
 		/******* ASSIGN ANIMATIONS *******/
 		trump.setAnimation("right", 0, 7);
@@ -156,8 +169,54 @@ public class Beta extends Game {
 	 * */
 	@Override
 	public void update(ArrayList<String> pressedKeys) {
-		System.out.println(bullet.size());
 		super.update(pressedKeys);
+		/****************************************************************************************
+		 * 
+		 * GAME SCREEN HANDLING
+		 * 
+		 ***************************************************************************************/
+		if (restartGame) {
+			//reset objects
+			for (int i = 0; i < good.size(); i++) {
+				//remove from disp tree
+				allobjects.removeChild(good.get(i));
+			}
+			for (int i = 0; i < bad.size(); i++) {
+				//remove from disp tree
+				allobjects.removeChild(bad.get(i));
+			}
+			for (int i = 0; i < power.size(); i++) {
+				//remove from disp tree
+				allobjects.removeChild(power.get(i));
+			}
+			//clear arraylists
+			good.clear();
+			bad.clear();
+			power.clear();
+			
+			//reset PU status messages
+			invul = "";
+			sd = "";
+			
+			//reset limbo timer
+			limboTimer = 0;
+			//reset level timer
+			timeVal = timeValMax;
+			//reset player health
+			healthVal = 100;
+			//reset object velocity
+			vCounter = 0;
+			currentVY = 1;
+			oldVY = 1;
+			//reset power up status
+			invulnerable = false;
+			invulnerableTimer = invulnerableTimerMax;
+			slowDown = false;
+			slowDownTimer = slowDownTimerMax; 
+			
+		}
+		
+		
 		double xPos = trump.getPositionX();
 		double yPos = trump.getPositionY();
 		
@@ -207,15 +266,15 @@ public class Beta extends Game {
 				//reset objects
 				for (int i = 0; i < good.size(); i++) {
 					//remove from disp tree
-					this.removeChild(good.get(i));
+					allobjects.removeChild(good.get(i));
 				}
 				for (int i = 0; i < bad.size(); i++) {
 					//remove from disp tree
-					this.removeChild(bad.get(i));
+					allobjects.removeChild(bad.get(i));
 				}
 				for (int i = 0; i < power.size(); i++) {
 					//remove from disp tree
-					this.removeChild(power.get(i));
+					allobjects.removeChild(power.get(i));
 				}
 				//clear arraylists
 				good.clear();
@@ -271,7 +330,7 @@ public class Beta extends Game {
 					//generate an object with a velocity of currentVY
 					fireball.get(fireball.size() - 1).setVY(fireballVY);
 					//add to display tree
-					this.addChild(fireball.get(fireball.size() - 1));
+					allobjects.addChild(fireball.get(fireball.size() - 1));
 					
 					//increment fireballCounter (kind of like an item ID)
 					fireballCounter++;
@@ -292,11 +351,11 @@ public class Beta extends Game {
 						//CHECK FOR COLLISIONS
 						if(bullet.get(i).collidesWith(hillary)){
 							hilHealthVal -= 10;
-							this.removeChild(bullet.get(i));
+							allobjects.removeChild(bullet.get(i));
 							bullet.remove(i);
 							i--;
 						} else if (bullet.get(i).getPositionY() <= 0) { //else bullet went up off screen
-							this.removeChild(bullet.get(i));
+							allobjects.removeChild(bullet.get(i));
 							bullet.remove(i);
 							i--;
 						}	
@@ -312,11 +371,11 @@ public class Beta extends Game {
 						//CHECK FOR COLLISIONS
 						if(fireball.get(i).collidesWith(trump)){
 							healthVal-=10;
-							this.removeChild(fireball.get(i));
+							allobjects.removeChild(fireball.get(i));
 							fireball.remove(i);
 							i--;
 						} else if (fireball.get(i).getPositionY() >= 640) {
-							this.removeChild(fireball.get(i));
+							allobjects.removeChild(fireball.get(i));
 							fireball.remove(i);
 							i--;
 						}				
@@ -355,7 +414,7 @@ public class Beta extends Game {
 					//generate an object with a velocity of currentVY
 					good.get(good.size() - 1).setVY(currentVY);
 					//add to display tree
-					this.addChild(good.get(good.size() - 1));
+					allobjects.addChild(good.get(good.size() - 1));
 					
 					//increment goodCounter (kind of like an item ID)
 					goodCounter++;
@@ -378,7 +437,7 @@ public class Beta extends Game {
 					//generate an object with a velocity of currentVY
 					bad.get(bad.size() - 1).setVY(currentVY);
 					//add to display tree
-					this.addChild(bad.get(bad.size() - 1));
+					allobjects.addChild(bad.get(bad.size() - 1));
 					
 					//increment badCounter (kind of like an item ID)
 					badCounter++;
@@ -411,7 +470,7 @@ public class Beta extends Game {
 					//make PU fall down at currentVY
 					power.get(power.size() - 1).setVY(currentVY);
 					//add to display tree
-					this.addChild(power.get(power.size() - 1));
+					allobjects.addChild(power.get(power.size() - 1));
 					
 					//increment goodCounter (kind of like an item ID)
 					powerCounter++;
@@ -435,11 +494,11 @@ public class Beta extends Game {
 						//CHECK FOR COLLISIONS
 						if(good.get(i).collidesWith(trump)){
 							pointVal+=5;
-							this.removeChild(good.get(i));
+							allobjects.removeChild(good.get(i));
 							good.remove(i);
 							i--;
 						} else if (good.get(i).getPositionY() >= 640) {
-							this.removeChild(good.get(i));
+							allobjects.removeChild(good.get(i));
 							good.remove(i);
 							i--;
 						}
@@ -453,11 +512,11 @@ public class Beta extends Game {
 						//CHECK FOR COLLISIONS
 						if(bad.get(i).collidesWith(trump) && !invulnerable){
 							healthVal-=10;
-							this.removeChild(bad.get(i));
+							allobjects.removeChild(bad.get(i));
 							bad.remove(i);
 							i--;
 						} else if (bad.get(i).getPositionY() >= 640) {
-							this.removeChild(bad.get(i));
+							allobjects.removeChild(bad.get(i));
 							bad.remove(i);
 							i--;
 						}
@@ -475,7 +534,7 @@ public class Beta extends Game {
 								if(!slowDown){
 									slowDown = true;
 								}
-								this.removeChild(power.get(i));
+								allobjects.removeChild(power.get(i));
 								power.remove(i);
 								i--;
 							} else if(power.get(i).getId().contains("Meatloaf")){
@@ -483,7 +542,7 @@ public class Beta extends Game {
 								if(healthVal<100){
 									healthVal+=10;
 								}
-								this.removeChild(power.get(i));
+								allobjects.removeChild(power.get(i));
 								power.remove(i);
 								i--;
 							} else if(power.get(i).getId().contains("TacoSalad")){
@@ -491,12 +550,12 @@ public class Beta extends Game {
 								if(!invulnerable){
 									invulnerable = true;
 								}
-								this.removeChild(power.get(i));
+								allobjects.removeChild(power.get(i));
 								power.remove(i);
 								i--;
 							}
 						} else if (power.get(i).getPositionY() >= 640) {
-							this.removeChild(power.get(i));
+							allobjects.removeChild(power.get(i));
 							power.remove(i);
 							i--;
 						}	
@@ -668,6 +727,14 @@ public class Beta extends Game {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		super.keyReleased(e);
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			if (this.isRunning()) {
+				this.pause();
+			} else {
+				this.start();
+			}
+			
+		}
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 			
 			//can only use space in boss fight
@@ -685,7 +752,7 @@ public class Beta extends Game {
 					//set bullet's velocity to the bulletVY
 					bullet.get(bullet.size() - 1).setVY(bulletVY);
 					//add to display tree
-					this.addChild(bullet.get(bullet.size() - 1));
+					allobjects.addChild(bullet.get(bullet.size() - 1));
 					
 					//increment bulletCounter (kind of like an item ID)
 					bulletCounter++;					

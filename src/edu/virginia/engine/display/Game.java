@@ -93,6 +93,10 @@ public class Game extends DisplayObjectContainer implements ActionListener, KeyL
 		}
 	}
 	
+	public boolean isRunning() {
+		return gameTimer.isRunning();
+	}
+	
 	public void exitGame(){
 		stop();
 		this.mainFrame.setVisible(false);
