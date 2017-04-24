@@ -38,6 +38,10 @@ public class Beta extends Game {
 	Sprite screenlose = new Sprite("ScreenLose", "screenlose.png");
 	
 	/*************************** BASIC LEVEL VARIABLES ***************************/
+
+	String[] goodImg = {"MAGA.png", "piss.png", "toupee.png"};
+	String[] badImg = {"imwithher.png", "constitution.png", "holywater.png"};
+	
 	ArrayList<Sprite> good = new ArrayList<Sprite>();
 	int goodCounter = 0;
 	int frameCounterGood = 0;
@@ -431,7 +435,6 @@ public class Beta extends Game {
 				
 				/*************************** GENERATE OBJECTS RANDOMLY ***************************/
 				//GOOD OBJECTS
-				String[] goodImg = {"MAGA.png", "piss.png", "toupee.png"};
 				if (frameCounterGood == currentTimerGood) {
 					int goodNum = randomNum.nextInt(3);
 
@@ -459,7 +462,6 @@ public class Beta extends Game {
 				//BAD OBJECTS
 				if (frameCounterBad == currentTimerBad) {
 					int badNum = randomNum.nextInt(3);
-					String badImg[] = {"imwithehr.png", "constitution.png", "holywater.png"};
 					//generate new bad object
 					bad.add(new Sprite("bad" + badCounter, badImg[badNum]));
 					//generate a random x position between 200 and 600 (including bounds)
