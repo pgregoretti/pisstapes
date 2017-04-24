@@ -17,6 +17,7 @@ import edu.virginia.engine.util.SoundManager;
 
 public class Beta extends Game {
 	
+	boolean start = true;
 	boolean restartGame = false;
 
 //	Sprite trump = new Sprite("trump", "BoxTrump.jpg");
@@ -170,52 +171,11 @@ public class Beta extends Game {
 	@Override
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
-		/****************************************************************************************
-		 * 
-		 * GAME SCREEN HANDLING
-		 * 
-		 ***************************************************************************************/
-		if (restartGame) {
-			//reset objects
-			for (int i = 0; i < good.size(); i++) {
-				//remove from disp tree
-				allobjects.removeChild(good.get(i));
-			}
-			for (int i = 0; i < bad.size(); i++) {
-				//remove from disp tree
-				allobjects.removeChild(bad.get(i));
-			}
-			for (int i = 0; i < power.size(); i++) {
-				//remove from disp tree
-				allobjects.removeChild(power.get(i));
-			}
-			//clear arraylists
-			good.clear();
-			bad.clear();
-			power.clear();
-			
-			//reset PU status messages
-			invul = "";
-			sd = "";
-			
-			//reset limbo timer
-			limboTimer = 0;
-			//reset level timer
-			timeVal = timeValMax;
-			//reset player health
-			healthVal = 100;
-			//reset object velocity
-			vCounter = 0;
-			currentVY = 1;
-			oldVY = 1;
-			//reset power up status
-			invulnerable = false;
-			invulnerableTimer = invulnerableTimerMax;
-			slowDown = false;
-			slowDownTimer = slowDownTimerMax; 
-			
+		if (start) {
+			this.pause();
+//			screen.addChild(trump);
+			System.out.println("game is starting");
 		}
-		
 		
 		double xPos = trump.getPositionX();
 		double yPos = trump.getPositionY();
@@ -732,8 +692,14 @@ public class Beta extends Game {
 				this.pause();
 			} else {
 				this.start();
+				if (start)
+					start = false;
 			}
-			
+		}
+		if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+			if (!this.isRunning()) {
+				restartGame = true;
+			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 			
