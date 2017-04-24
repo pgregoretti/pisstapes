@@ -29,6 +29,10 @@ public class DisplayObjectContainer extends DisplayObject {
 	
 	/*** Getters and Setters ***/
 	
+	public ArrayList<DisplayObject> getAllChildren() {
+		return children;
+	}
+	
 	public void addChild(DisplayObject child) {
 		this.children.add(child);
 	}

@@ -18,16 +18,24 @@ import edu.virginia.engine.util.SoundManager;
 public class Beta extends Game {
 	
 	boolean start = true;
-	boolean restartGame = false;
+	boolean pause = false;
+	boolean gameRestart = false;
+	boolean gameWin = false;
+	boolean gameLose = false;
 
 //	Sprite trump = new Sprite("trump", "BoxTrump.jpg");
 	AnimatedSprite trump = new AnimatedSprite("Trump", "trump-spritesheet.png", 94, 150, 2, 8, 0);
 	boolean isWalking = false;
 	
-	/*************************** BACKGROUND AND SCREEN CONTAINERS ***************************/
+	/*************************** BACKGROUND AND SCREEN CONTAINERS/SCREEN SPRITES ***************************/
 	DisplayObjectContainer background = new DisplayObjectContainer("background");
 	DisplayObjectContainer allobjects = new DisplayObjectContainer("allobjects");
+	DisplayObjectContainer person = new DisplayObjectContainer("person");
 	DisplayObjectContainer screen = new DisplayObjectContainer("screen");
+	Sprite screenstart = new Sprite("ScreenStart", "screenstart.png");
+	Sprite screenpause = new Sprite("ScreenPause", "screenpause.png");
+	Sprite screenwin = new Sprite("ScreenWin", "screenwin.png");
+	Sprite screenlose = new Sprite("ScreenLose", "screenlose.png");
 	
 	/*************************** BASIC LEVEL VARIABLES ***************************/
 	ArrayList<Sprite> good = new ArrayList<Sprite>();
@@ -134,11 +142,11 @@ public class Beta extends Game {
 		/******* ADD SPRITES *******/
 		this.addChild(background);
 		this.addChild(allobjects);
+		this.addChild(person);
 		this.addChild(screen);
-		allobjects.addChild(trump);
-		allobjects.addChild(hillary);
-//		this.addChild(trump);
-//		this.addChild(hillary);
+		person.addChild(trump);
+		person.addChild(hillary);
+		screen.addChild(screenstart);
 		
 		/******* ASSIGN ANIMATIONS *******/
 		trump.setAnimation("right", 0, 7);
@@ -173,8 +181,67 @@ public class Beta extends Game {
 		super.update(pressedKeys);
 		if (start) {
 			this.pause();
-//			screen.addChild(trump);
-			System.out.println("game is starting");
+		}
+		if (pause) {
+			if (gameWin) {
+				screen.addChild(screenwin);
+			} else if (gameLose) {
+				screen.addChild(screenlose);
+			} else {
+				screen.addChild(screenpause);
+			}
+			if (gameRestart) {
+				//reset objects
+				for (int i = 0; i < good.size(); i++) {
+					//remove from disp tree
+					allobjects.removeChild(good.get(i));
+				}
+				for (int i = 0; i < bad.size(); i++) {
+					//remove from disp tree
+					allobjects.removeChild(bad.get(i));
+				}
+				for (int i = 0; i < power.size(); i++) {
+					//remove from disp tree
+					allobjects.removeChild(power.get(i));
+				}
+				
+				//clear arraylists
+				good.clear();
+				bad.clear();
+				power.clear();
+				
+				//reset PU status messages
+				invul = "";
+				sd = "";
+				
+				//get out of limbo
+				levelLimbo = false;
+				//reset limbo timer
+				limboTimer = 0;
+				//reset level
+				level = 1;
+				//reset level timer
+				timeVal = timeValMax;
+				//reset player health
+				healthVal = 100;
+				//reset player points
+				pointVal = 0;
+				//reset object velocity
+				vCounter = 0;
+				currentVY = 1;
+				oldVY = 1;
+				//reset power up status
+				invulnerable = false;
+				invulnerableTimer = invulnerableTimerMax;
+				slowDown = false;
+				slowDownTimer = slowDownTimerMax; 
+				//reset random booleans
+				pause = false;
+				gameRestart = false;
+				gameWin = false;
+				gameLose = false;
+			}
+			this.pause();
 		}
 		
 		double xPos = trump.getPositionX();
@@ -653,16 +720,22 @@ public class Beta extends Game {
 		
 		if (healthVal <= 0) {
 			g.drawString("You Died", 350, 200);
-			this.stop();
+			gameLose = true;
+			gameRestart = true;
+			pause = true;
 		}
 		
 		if (level >= 4) {
 			if (hilHealthVal <= 0) {
 				g.drawString("You defeated democracy!", 350, 220);
-				this.stop();
+				gameWin = true;
+				gameRestart = true;
+				pause = true;
 			} else if (numBullets <= 0 && bullet.isEmpty()) {
 				g.drawString("You ran out of bullets.", 350, 220);
-				this.stop();
+				gameLose = true;
+				gameRestart = true;
+				pause = true;
 			}			
 		}
 		
@@ -672,7 +745,7 @@ public class Beta extends Game {
 		
 		
 		/* Same, just check for null in case a frame gets thrown in before trump is initialized */
-		if(trump != null) trump.draw(g);
+//		if(trump != null) trump.draw(g);
 	}
 
 	/**
@@ -689,16 +762,16 @@ public class Beta extends Game {
 		super.keyReleased(e);
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			if (this.isRunning()) {
-				this.pause();
+				pause = true;
 			} else {
 				this.start();
-				if (start)
+				pause = false;
+				if (start) {
 					start = false;
-			}
-		}
-		if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-			if (!this.isRunning()) {
-				restartGame = true;
+					screen.removeChild(screenstart);
+				} else {
+					screen.removeAll();
+				}
 			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
