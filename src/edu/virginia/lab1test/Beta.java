@@ -19,7 +19,7 @@ import edu.virginia.engine.util.SoundManager;
 public class Beta extends Game {
 	
 	boolean start = true;
-	boolean pause = false;
+	boolean pause = true;
 	boolean gameRestart = false;
 	boolean gameWin = false;
 	boolean gameLose = false;
@@ -35,6 +35,8 @@ public class Beta extends Game {
 	DisplayObjectContainer allobjects = new DisplayObjectContainer("allobjects");
 	DisplayObjectContainer person = new DisplayObjectContainer("person");
 	DisplayObjectContainer screen = new DisplayObjectContainer("screen");
+	
+	Sprite sidebar = new Sprite("Sidebar", "sidebar.png");
 	Sprite screenstart = new Sprite("ScreenStart", "screenstart.png");
 	Sprite screenpause = new Sprite("ScreenPause", "screenpause.png");
 	Sprite screenwin = new Sprite("ScreenWin", "screenwin.png");
@@ -68,7 +70,8 @@ public class Beta extends Game {
 	int tempX;
 	int hilTimer = 60;
 	
-	Sprite hillary = new Sprite("hillary" , "BoxHillary.jpg");
+//	Sprite hillary = new Sprite("hillary" , "BoxHillary.jpg");
+	AnimatedSprite hillary = new AnimatedSprite("Hillary", "hillary-spritesheet.png", 88, 150, 2, 8, 0);
 	Tween hillaryX = new Tween(hillary);
 
 	ArrayList<Sprite> bullet = new ArrayList<Sprite>();
@@ -151,6 +154,7 @@ public class Beta extends Game {
 		this.addChild(allobjects);
 		this.addChild(person);
 		this.addChild(screen);
+		allobjects.addChild(sidebar);
 		person.addChild(trump);
 		person.addChild(hillary);
 		screen.addChild(screenstart);
@@ -158,6 +162,8 @@ public class Beta extends Game {
 		/******* ASSIGN ANIMATIONS *******/
 		trump.setAnimation("right", 0, 7);
 		trump.setAnimation("left", 8, 15);
+		hillary.setAnimation("right", 0, 7);
+		hillary.setAnimation("left", 8, 15);
 		
 		/******* POSITION SPRITES *******/
 		trump.setPosition(350, 530);
@@ -190,8 +196,7 @@ public class Beta extends Game {
 		super.update(pressedKeys);
 		if (start) {
 			this.pause();
-		}
-		if (pause) {
+		} else if (pause) {
 			if (gameWin) {
 				screen.addChild(screenwin);
 			} else if (gameLose) {
@@ -294,7 +299,7 @@ public class Beta extends Game {
 			}
 			
 			//update Trump's bullet inventory
-			numBullets = pointVal/10;
+			numBullets = 500;
 			
 			if (timeVal <= 0 && !levelLimbo){
 				level++;
@@ -346,12 +351,20 @@ public class Beta extends Game {
 					int prevX = tempX;
 					tempX = hillaryRandom.nextInt((490 - 250) + 1) + 250;
 					hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 125);
+					if (tempX - hillary.getPositionX() <= 0 && hillary.getAnimation() != "left") {
+						System.out.println("hillary moving left");
+						hillary.animate("left");
+					} else if (tempX - hillary.getPositionX() > 0 && hillary.getAnimation() != "right") {
+						System.out.println("hillary moving right");
+						hillary.animate("right");
+					}
 					TweenJuggler.getInstance().add(hillaryX);
 					
 					/** DEBUGGER MESSAGES **/
 					System.out.println("Hillary is travelling from " + Integer.toString(prevX) + " to " 
 							+ Integer.toString(tempX));
 				}
+				
 				
 				
 				/*************************** GENERATE FIREBALLS RANDOMLY ***************************/
@@ -379,11 +392,11 @@ public class Beta extends Game {
 				
 				/*************************** SHOOTING PHYSICS OF BULLET ***************************/
 				/*************************** AND COLLISION OF BULLET ***************************/
-				//only need to check for collisions on bullet past y <= 50
+				//only need to check for collisions on bullet past y <= 220
 
 				for (int i = 0; i < bullet.size(); i++) {
 					bullet.get(i).setPositionY(bullet.get(i).getPositionY() - bullet.get(i).getVY());
-					if (bullet.get(i).getPositionY() <= 50) {
+					if (bullet.get(i).getPositionY() <= 220) {
 						//CHECK FOR COLLISIONS
 						if(bullet.get(i).collidesWith(hillary)){
 							hilHealthVal -= 10;
@@ -682,11 +695,11 @@ public class Beta extends Game {
 			}
 		}
 		
-		if(pressedKeys.size() == 0 || !isWalking) {
-			trump.setPause(true);
-		} else {
-			trump.setPause(false);
-		}
+//		if(pressedKeys.size() == 0 || !isWalking) {
+//			trump.setPause(true);
+//		} else {
+//			trump.setPause(false);
+//		}
 		
 		//reset iswalking
 		isWalking = false;		
@@ -702,46 +715,49 @@ public class Beta extends Game {
 	@Override
 	public void draw(Graphics g){
 		super.draw(g);
-		
-		g.drawRect(0, 0, 200, 700);
-		g.drawRect(200, 0, 400, 700);
+		if (!start && !pause) {
 
-		String health = "Health: " + healthVal;
+			String health = "Health: " + healthVal;
 
 
-		if (level < 4) {
-			String points = "Points: " + pointVal;
-			String time = "Time Remaining: " + Math.floor(timeVal/60);
-			
-			if(invulnerable){
-				invul = "Invulnerable for: " + Math.floor(invulnerableTimer/60);
-			} else {
-				invul = "";
+			if (level < 4) {
+				String points = "Points: " + pointVal;
+				String time = "Time Remaining: " + Math.floor(timeVal/60);
+				
+				if(invulnerable){
+					invul = "Invulnerable for: " + Math.floor(invulnerableTimer/60);
+				} else {
+					invul = "";
+				}
+				
+				if(slowDown){
+					sd = "Slowing down for: " + Math.floor(slowDownTimer/60);
+				} else {
+					sd = "";
+				}
+				
+				g.drawString("Level: " + level, 15, 20);
+				g.drawString(time, 15, 40);
+				g.drawString(health, 15, 60);
+				g.drawString(points, 15, 80);
+				g.drawString(invul, 15, 100);
+				g.drawString(sd, 15, 120);			
+			} else if (level == 4) {
+				String bullets = "Bullets left: " + numBullets;
+				String hilHealth = "Hillary's Health: " + hilHealthVal;
+				
+				g.drawString(health, 15, 20);
+				g.drawString(bullets, 15, 40);
+				g.drawString(hilHealth, 15, 60);
 			}
 			
-			if(slowDown){
-				sd = "Slowing down for: " + Math.floor(slowDownTimer/60);
-			} else {
-				sd = "";
+			if (levelLimbo) {
+				g.drawString(levelMessage, 250, 200);
 			}
-			
-			g.drawString("Level: " + level, 15, 20);
-			g.drawString(time, 15, 40);
-			g.drawString(health, 15, 60);
-			g.drawString(points, 15, 80);
-			g.drawString(invul, 15, 100);
-			g.drawString(sd, 15, 120);			
-		} else if (level == 4) {
-			String bullets = "Bullets left: " + numBullets;
-			String hilHealth = "Hillary's Health: " + hilHealthVal;
-			
-			g.drawString(health, 15, 20);
-			g.drawString(bullets, 15, 40);
-			g.drawString(hilHealth, 15, 60);
 		}
 		
+		/************ SCREEN STATES ************/
 		if (healthVal <= 0) {
-			g.drawString("You Died", 350, 200);
 			gameLose = true;
 			gameRestart = true;
 			pause = true;
@@ -749,20 +765,14 @@ public class Beta extends Game {
 		
 		if (level >= 4) {
 			if (hilHealthVal <= 0) {
-				g.drawString("You defeated democracy!", 350, 220);
 				gameWin = true;
 				gameRestart = true;
 				pause = true;
 			} else if (numBullets <= 0 && bullet.isEmpty()) {
-				g.drawString("You ran out of bullets.", 350, 220);
 				gameLose = true;
 				gameRestart = true;
 				pause = true;
 			}			
-		}
-		
-		if (levelLimbo) {
-			g.drawString(levelMessage, 250, 200);
 		}
 		
 		

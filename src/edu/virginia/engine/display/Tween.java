@@ -1,5 +1,7 @@
 package edu.virginia.engine.display;
 
+import java.util.ArrayList;
+
 public class Tween {
 	private DisplayObject object;
 	private String transition;
@@ -9,6 +11,7 @@ public class Tween {
 	private double time;
 	private boolean isAnimating = false;
 	private double incr = 0;
+	ArrayList<String> pressedKeys = new ArrayList<String>();
 	
 	public Tween(DisplayObject object) {
 		this.object = object;
@@ -104,6 +107,7 @@ public class Tween {
 //	}
 	
 	public void update() {
+		this.object.update(pressedKeys);
 		//invoked once per frame by the TweenJuggler. Updates this tween / DisplayObject
 		//change object actual fields here
 		if (isAnimating) {
