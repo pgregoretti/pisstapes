@@ -12,6 +12,7 @@ import edu.virginia.engine.display.Sprite;
 import edu.virginia.engine.display.AnimatedSprite;
 import edu.virginia.engine.display.Tween;
 import edu.virginia.engine.display.TweenJuggler;
+import edu.virginia.engine.events.EventDispatcher;
 import edu.virginia.engine.util.SoundManager;
 
 
@@ -26,6 +27,8 @@ public class Beta extends Game {
 //	Sprite trump = new Sprite("trump", "BoxTrump.jpg");
 	AnimatedSprite trump = new AnimatedSprite("Trump", "trump-spritesheet.png", 94, 150, 2, 8, 0);
 	boolean isWalking = false;
+	static SoundManager sound = new SoundManager();
+	
 	
 	/*************************** BACKGROUND AND SCREEN CONTAINERS/SCREEN SPRITES ***************************/
 	DisplayObjectContainer background = new DisplayObjectContainer("background");
@@ -170,6 +173,8 @@ public class Beta extends Game {
 		/******* ADD TWEENS *******/
 		
 		/******* ADD SOUNDS *******/
+		sound.LoadMusic("pizza", "pizza.wav");
+		
 		
 		
 		
@@ -531,6 +536,8 @@ public class Beta extends Game {
 							allobjects.removeChild(good.get(i));
 							good.remove(i);
 							i--;
+							sound.LoadSoundEffect("bingbong", "bingbong.wav");
+							sound.PlaySoundEffect("bingbong");
 						} else if (good.get(i).getPositionY() >= 640) {
 							allobjects.removeChild(good.get(i));
 							good.remove(i);
@@ -549,6 +556,8 @@ public class Beta extends Game {
 							allobjects.removeChild(bad.get(i));
 							bad.remove(i);
 							i--;
+							sound.LoadSoundEffect("oyaye", "oyaye.wav");
+							sound.PlaySoundEffect("oyaye");
 						} else if (bad.get(i).getPositionY() >= 640) {
 							allobjects.removeChild(bad.get(i));
 							bad.remove(i);
@@ -571,6 +580,8 @@ public class Beta extends Game {
 								allobjects.removeChild(power.get(i));
 								power.remove(i);
 								i--;
+								sound.LoadSoundEffect("ivanka", "heardofivanka.wav");
+								sound.PlaySoundEffect("ivanka");
 							} else if(power.get(i).getId().contains("Meatloaf")){
 								System.out.println("Trump ate meatloaf with Chris Christie");
 								if(healthVal<100){
@@ -579,6 +590,8 @@ public class Beta extends Game {
 								allobjects.removeChild(power.get(i));
 								power.remove(i);
 								i--;
+								sound.LoadSoundEffect("lovemylife", "lovemylife.wav");
+								sound.PlaySoundEffect("lovemylife");
 							} else if(power.get(i).getId().contains("TacoSalad")){
 								System.out.println("Trump ate a Taco Salad and became less racist");
 								if(!invulnerable){
@@ -587,6 +600,8 @@ public class Beta extends Game {
 								allobjects.removeChild(power.get(i));
 								power.remove(i);
 								i--;
+								sound.LoadSoundEffect("mexicanpeople", "mexicanpeople.wav");
+								sound.PlaySoundEffect("mexicanpeople");
 							}
 						} else if (power.get(i).getPositionY() >= 640) {
 							allobjects.removeChild(power.get(i));
@@ -762,6 +777,7 @@ public class Beta extends Game {
 	public static void main(String[] args) {
 		Beta game = new Beta();
 		game.start();
+		sound.PlayMusic("pizza");
 	}
 	
 	@Override
