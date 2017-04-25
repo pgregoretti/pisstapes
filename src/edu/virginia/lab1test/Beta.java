@@ -27,6 +27,7 @@ public class Beta extends Game {
 	Font myFontLevel;
 	Font myFontTimer;
 	Font myFontPU;
+	Font myFontCounter;
 	
 	boolean start = true;
 	boolean pause = true;
@@ -51,6 +52,7 @@ public class Beta extends Game {
 	Sprite sidebar = new Sprite("Sidebar", "sidebar.png");
 	Sprite screenstart = new Sprite("ScreenStart", "screenstart.png");
 	Sprite screenpause = new Sprite("ScreenPause", "screenpause.png");
+	Sprite screenboss = new Sprite("ScreenBoss", "screenboss.png");
 	Sprite screenwin = new Sprite("ScreenWin", "screenwin.png");
 	Sprite screenlose = new Sprite("ScreenLose", "screenlose.png");
 	
@@ -99,8 +101,7 @@ public class Beta extends Game {
 	int bulletVY = 10;
 	int fireballVY = 8;
 	
-	int victory = 0;
-	//0 = still playing, 1 = win!, -1 = lose!
+	int bulletCount = 0;
 	
 	
 	/*************************** LEVEL SWITCHING VARIABLES ***************************/
@@ -145,6 +146,10 @@ public class Beta extends Game {
 	String sd = ""; //slow down string
 	String levelMessage = "";
 	String levelMessage2 = "";
+	
+	String countdown = "";
+	String countUp = "";
+	
 	boolean levelLimbo = false;
 	int limboTimer = 0;
 	
@@ -162,8 +167,10 @@ public class Beta extends Game {
 	Sprite[] health = {health1, health1, health2, health3, health4, health5, health6, health7, health8, health9, health10};
 	int healthVal = 10;
 	int pointVal = 0;
-	int timeVal = 3600;
-	int timeValMax = 3600;
+//	int timeVal = 3600;
+//	int timeValMax = 3600;
+	int timeVal = 600;
+	int timeValMax = 600;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -185,12 +192,14 @@ public class Beta extends Game {
 		    myFontSidebar = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(12f);
 		    myFontLevel = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(30f);
 		    myFontTimer = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(108f);
+		    myFontCounter = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(125f);
 
 		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		    //register the font
 		    ge.registerFont(myFontSidebar);
 		    ge.registerFont(myFontLevel);
 		    ge.registerFont(myFontTimer);
+		    ge.registerFont(myFontCounter);
 		} catch (IOException e) {
 		    e.printStackTrace();
 		} catch(FontFormatException e) {
@@ -340,6 +349,12 @@ public class Beta extends Game {
 				gameRestart = false;
 				gameWin = false;
 				gameLose = false;
+				
+				numBullets = 0;
+				bulletCount = 0;
+				
+				countdown = "";
+				countUp = "";
 			}
 			this.pause();
 		}
@@ -412,9 +427,19 @@ public class Beta extends Game {
 				invul = "";
 				sd = "";
 				
-
-				sound.LoadSoundEffect("levelend", "levelend.wav");
-				sound.PlaySoundEffect("levelend");
+				if (numBullets > 0) {
+					if (level != 4) {
+						sound.LoadSoundEffect("levelend", "levelend.wav");
+						sound.PlaySoundEffect("levelend");	
+					} else {
+						sound.LoadSoundEffect("hillaryintro", "hillaryintro.wav");
+						sound.PlaySoundEffect("hillaryintro");							
+					}
+				}
+				
+				if (level == 4) {
+					screen.addChild(screenboss);
+				}
 				
 				//begin limbo
 				levelLimbo = true;
@@ -774,6 +799,9 @@ public class Beta extends Game {
 				}
 				
 			} else if (limboTimer > 360) {
+				if (level == 4) {
+					screen.removeChild(screenboss);
+				}
 				//get out of limbo
 				levelLimbo = false;
 				//reset limbo timer
@@ -845,7 +873,11 @@ public class Beta extends Game {
 
 		if (level < 4) {
 			points = "Points: " + pointVal;
-			time = "" + (int)Math.floor(timeVal/60);
+			if ((int)Math.floor(timeVal/60) < 10) {
+				time = "0" + (int)Math.floor(timeVal/60);
+			} else {
+				time = "" + (int)Math.floor(timeVal/60);
+			}
 			levelString = "Level " + level;
 			
 			if(invulnerable){
@@ -899,6 +931,38 @@ public class Beta extends Game {
 //		if(trump != null) trump.draw(g);
 
 		super.draw(g);
+		
+		if (levelLimbo && level == 4) {
+			if (pointVal < 10) {
+				countdown = "00" + pointVal;
+			} else if (pointVal < 100) {
+				countdown = "0" + pointVal;				
+			} else {
+				countdown = "" + pointVal;				
+			}
+
+			if (bulletCount < 10) {
+				countUp = "00" + bulletCount;
+			} else if (bulletCount < 100) {
+				countUp = "0" + bulletCount;				
+			} else {
+				countUp = "" + bulletCount;				
+			}
+			
+			g.setFont(myFontCounter);
+			g.setColor(new Color(224, 145, 5));
+			if (pointVal > 0) {
+				pointVal--;
+			}
+			g.drawString(countdown, 143, 219);
+			
+			g.setColor(new Color(250, 226, 147));
+			if (bulletCount < numBullets) {
+				bulletCount++;
+			}
+			g.drawString(countUp, 143, 569);
+		}
+		
 	}
 
 	/**
