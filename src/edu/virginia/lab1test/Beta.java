@@ -32,6 +32,7 @@ public class Beta extends Game {
 	
 	/*************************** BACKGROUND AND SCREEN CONTAINERS/SCREEN SPRITES ***************************/
 	DisplayObjectContainer background = new DisplayObjectContainer("background");
+	DisplayObjectContainer healthContainer = new DisplayObjectContainer("healthContainer");
 	DisplayObjectContainer allobjects = new DisplayObjectContainer("allobjects");
 	DisplayObjectContainer person = new DisplayObjectContainer("person");
 	DisplayObjectContainer screen = new DisplayObjectContainer("screen");
@@ -129,7 +130,19 @@ public class Beta extends Game {
 	boolean levelLimbo = false;
 	int limboTimer = 0;
 	
-	int healthVal = 100;
+	//the least efficient way to do this but whatever
+	Sprite health1 = new Sprite("Health1", "heart.png");
+	Sprite health2 = new Sprite("Health2", "heart.png");
+	Sprite health3 = new Sprite("Health3", "heart.png");
+	Sprite health4 = new Sprite("Health4", "heart.png");
+	Sprite health5 = new Sprite("Health5", "heart.png");
+	Sprite health6 = new Sprite("Health6", "heart.png");
+	Sprite health7 = new Sprite("Health7", "heart.png");
+	Sprite health8 = new Sprite("Health8", "heart.png");
+	Sprite health9 = new Sprite("Health9", "heart.png");
+	Sprite health10 = new Sprite("Health10", "heart.png");
+	Sprite[] health = {health1, health1, health2, health3, health4, health5, health6, health7, health8, health9, health10};
+	int healthVal = 10;
 	int pointVal = 0;
 	int timeVal = 3600;
 	int timeValMax = 3600;
@@ -151,10 +164,14 @@ public class Beta extends Game {
 		
 		/******* ADD SPRITES *******/
 		this.addChild(background);
+		this.addChild(healthContainer);
 		this.addChild(allobjects);
 		this.addChild(person);
 		this.addChild(screen);
-		allobjects.addChild(sidebar);
+		background.addChild(sidebar);
+		for (int i = 1; i < health.length; i++) {
+			healthContainer.addChild(health[i]);
+		}
 		person.addChild(trump);
 		person.addChild(hillary);
 		screen.addChild(screenstart);
@@ -169,6 +186,17 @@ public class Beta extends Game {
 		trump.setPosition(350, 530);
 		//set hillary off screen
 		hillary.setPosition(610, 50);
+		
+		health1.setPosition(10, 10);
+		health2.setPosition(40, 10);
+		health3.setPosition(70, 10);
+		health4.setPosition(100, 10);
+		health5.setPosition(130, 10);
+		health6.setPosition(10, 40);
+		health7.setPosition(40, 40);
+		health8.setPosition(70, 40);
+		health9.setPosition(100, 40);
+		health10.setPosition(130, 40);
 		
 		/******* SETUP TWEENS *******/
 		//hillary goes from x = 250 to 490
@@ -237,7 +265,11 @@ public class Beta extends Game {
 				//reset level timer
 				timeVal = timeValMax;
 				//reset player health
-				healthVal = 100;
+				healthContainer.removeAll();
+				for (int i = 1; i < health.length; i++) {
+					healthContainer.addChild(health[i]);
+				}
+				healthVal = 10;
 				//reset player points
 				pointVal = 0;
 				//reset object velocity
@@ -419,7 +451,8 @@ public class Beta extends Game {
 					if (fireball.get(i).getPositionY() >= 450) {
 						//CHECK FOR COLLISIONS
 						if(fireball.get(i).collidesWith(trump)){
-							healthVal-=10;
+							healthContainer.removeChild(health[healthVal]);
+							healthVal--;
 							allobjects.removeChild(fireball.get(i));
 							fireball.remove(i);
 							i--;
@@ -565,7 +598,8 @@ public class Beta extends Game {
 					if (bad.get(i).getPositionY() >= 450) {
 						//CHECK FOR COLLISIONS
 						if(bad.get(i).collidesWith(trump) && !invulnerable){
-							healthVal-=10;
+							healthContainer.removeChild(health[healthVal]);
+							healthVal--;
 							allobjects.removeChild(bad.get(i));
 							bad.remove(i);
 							i--;
@@ -597,8 +631,9 @@ public class Beta extends Game {
 								sound.PlaySoundEffect("ivanka");
 							} else if(power.get(i).getId().contains("Meatloaf")){
 								System.out.println("Trump ate meatloaf with Chris Christie");
-								if(healthVal<100){
-									healthVal+=10;
+								if(healthVal<10){
+									healthVal++;
+									healthContainer.addChild(health[healthVal]);
 								}
 								allobjects.removeChild(power.get(i));
 								power.remove(i);
@@ -682,7 +717,11 @@ public class Beta extends Game {
 				//reset level timer
 				timeVal = timeValMax;
 				//reset player health
-				healthVal = 100;
+				healthContainer.removeAll();
+				for (int i = 1; i < health.length; i++) {
+					healthContainer.addChild(health[i]);
+				}
+				healthVal = 10;
 				//reset object velocity
 				vCounter = 0;
 				currentVY = 1;
@@ -717,7 +756,7 @@ public class Beta extends Game {
 		super.draw(g);
 		if (!start && !pause) {
 
-			String health = "Health: " + healthVal;
+//			String health = "Health: " + healthVal;
 
 
 			if (level < 4) {
@@ -736,19 +775,19 @@ public class Beta extends Game {
 					sd = "";
 				}
 				
-				g.drawString("Level: " + level, 15, 20);
-				g.drawString(time, 15, 40);
-				g.drawString(health, 15, 60);
-				g.drawString(points, 15, 80);
-				g.drawString(invul, 15, 100);
-				g.drawString(sd, 15, 120);			
+				g.drawString("Level: " + level, 15, 75);
+				g.drawString(time, 15, 95);
+//				g.drawString(health, 15, 60);
+				g.drawString(points, 15, 115);
+				g.drawString(invul, 15, 135);
+				g.drawString(sd, 15, 155);			
 			} else if (level == 4) {
 				String bullets = "Bullets left: " + numBullets;
 				String hilHealth = "Hillary's Health: " + hilHealthVal;
 				
-				g.drawString(health, 15, 20);
-				g.drawString(bullets, 15, 40);
-				g.drawString(hilHealth, 15, 60);
+//				g.drawString(health, 15, 20);
+				g.drawString(bullets, 15, 75);
+				g.drawString(hilHealth, 15, 95);
 			}
 			
 			if (levelLimbo) {
