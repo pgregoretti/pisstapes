@@ -353,7 +353,7 @@ public class Beta extends Game {
 				//FIREBALL OBJECTS
 				if (frameCounterFB == currentTimerFB) {
 					//generate new fireball object
-					fireball.add(new Sprite("fireball" + fireballCounter, "BoxBad.jpg"));
+					fireball.add(new Sprite("fireball" + fireballCounter, "fireball.png"));
 					//set fireball to hil's position
 					fireball.get(fireball.size() - 1).setPosition(hillary.getPositionX(), hillary.getPositionY());
 					//turn on physics for this object
@@ -790,7 +790,7 @@ public class Beta extends Game {
 					numBullets--;
 					/*************************** GENERATE A BULLET ***************************/
 					//generate new bullet object
-					bullet.add(new Sprite("bullet" + bulletCounter, "BoxBullet.jpg"));
+					bullet.add(new Sprite("bullet" + bulletCounter, "bullet.png"));
 					//set bullet position to trump's position
 					bullet.get(bullet.size() - 1).setPosition(trump.getPositionX(), trump.getPositionY());
 					//turn on physics for this object
