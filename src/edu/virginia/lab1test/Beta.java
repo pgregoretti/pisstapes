@@ -105,7 +105,7 @@ public class Beta extends Game {
 	
 	
 	/*************************** LEVEL SWITCHING VARIABLES ***************************/
-	int level = 3;	
+	int level = 1;	
 	//randomNum = rand.nextInt((max - min) + 1) + min;
 	int[] goodGeneration = {0, 90, 120, 150};
 	int[] goodGenerationMin = {0, 0, 30, 60};
@@ -167,10 +167,10 @@ public class Beta extends Game {
 	Sprite[] health = {health1, health1, health2, health3, health4, health5, health6, health7, health8, health9, health10};
 	int healthVal = 10;
 	int pointVal = 0;
-//	int timeVal = 3600;
-//	int timeValMax = 3600;
-	int timeVal = 600;
-	int timeValMax = 600;
+	int timeVal = 3600;
+	int timeValMax = 3600;
+//	int timeVal = 900;
+//	int timeValMax = 900;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -952,7 +952,10 @@ public class Beta extends Game {
 			g.setFont(myFontCounter);
 			g.setColor(new Color(224, 145, 5));
 			if (pointVal > 0) {
-				pointVal--;
+				pointVal -= 10;
+				if (pointVal < 0) {
+					pointVal = 0;
+				}
 			}
 			g.drawString(countdown, 143, 219);
 			
