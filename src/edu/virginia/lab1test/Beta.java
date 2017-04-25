@@ -52,6 +52,7 @@ public class Beta extends Game {
 	Sprite sidebar = new Sprite("Sidebar", "sidebar.png");
 	Sprite screenstart = new Sprite("ScreenStart", "screenstart.png");
 	Sprite screenpause = new Sprite("ScreenPause", "screenpause.png");
+	Sprite screennext = new Sprite("ScreenNext", "screennext.png");
 	Sprite screenboss = new Sprite("ScreenBoss", "screenboss.png");
 	Sprite screenwin = new Sprite("ScreenWin", "screenwin.png");
 	Sprite screenlose = new Sprite("ScreenLose", "screenlose.png");
@@ -169,8 +170,8 @@ public class Beta extends Game {
 	int pointVal = 0;
 	int timeVal = 3600;
 	int timeValMax = 3600;
-//	int timeVal = 900;
-//	int timeValMax = 900;
+//	int timeVal = 300;
+//	int timeValMax = 300;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -439,6 +440,8 @@ public class Beta extends Game {
 				
 				if (level == 4) {
 					screen.addChild(screenboss);
+				} else {
+					screen.addChild(screennext);
 				}
 				
 				//begin limbo
@@ -785,22 +788,26 @@ public class Beta extends Game {
 			//END OF LEVEL
 			
 			limboTimer++;
+			levelMessage = "" + level;
 			//0 to 180 and then 180 to 360
-			if (limboTimer < 180 && limboTimer > 0) {
-				levelMessage = "End of Level | Final Score: " + pointVal;
-				levelMessage2 = "";
-			} else if (limboTimer < 360 && limboTimer > 180) {
-				if (level == 4) {
-					levelMessage = "A wild Hillary appeared!";
-					levelMessage2 = "ATrump gathered " + pointVal/10 + " bullets";
-				} else {
-					levelMessage = "Starting Level " + level;
-					levelMessage2 = "";
-				}
-				
-			} else if (limboTimer > 360) {
+//			if (limboTimer < 180 && limboTimer > 0) {
+//				levelMessage = "End of Level | Final Score: " + pointVal;
+//				levelMessage2 = "";
+//			} else if (limboTimer < 360 && limboTimer > 180) {
+//				if (level == 4) {
+//					levelMessage = "A wild Hillary appeared!";
+//					levelMessage2 = "ATrump gathered " + pointVal/10 + " bullets";
+//				} else {
+//					levelMessage = "Starting Level " + level;
+//					levelMessage2 = "";
+//				}
+//				
+//			} else
+			if (limboTimer > 360) {
 				if (level == 4) {
 					screen.removeChild(screenboss);
+				} else {
+					screen.removeChild(screennext);
 				}
 				//get out of limbo
 				levelLimbo = false;
@@ -917,13 +924,6 @@ public class Beta extends Game {
 			g.drawString(hilHealth, 15, 220);
 		}
 		
-		if (levelLimbo) {
-			g.drawString(levelMessage, 250, 200);
-			g.drawString(levelMessage2, 250, 210);
-			levelMessage = "";
-			levelMessage2 = "";
-		}
-		
 		
 		
 		
@@ -932,38 +932,45 @@ public class Beta extends Game {
 
 		super.draw(g);
 		
-		if (levelLimbo && level == 4) {
-			if (pointVal < 10) {
-				countdown = "00" + pointVal;
-			} else if (pointVal < 100) {
-				countdown = "0" + pointVal;				
-			} else {
-				countdown = "" + pointVal;				
-			}
-
-			if (bulletCount < 10) {
-				countUp = "00" + bulletCount;
-			} else if (bulletCount < 100) {
-				countUp = "0" + bulletCount;				
-			} else {
-				countUp = "" + bulletCount;				
-			}
-			
-			g.setFont(myFontCounter);
-			g.setColor(new Color(224, 145, 5));
-			if (pointVal > 0) {
-				pointVal -= 10;
-				if (pointVal < 0) {
-					pointVal = 0;
+		if (levelLimbo) {
+			if (level == 4) {
+				if (pointVal < 10) {
+					countdown = "00" + pointVal;
+				} else if (pointVal < 100) {
+					countdown = "0" + pointVal;				
+				} else {
+					countdown = "" + pointVal;				
 				}
+
+				if (bulletCount < 10) {
+					countUp = "00" + bulletCount;
+				} else if (bulletCount < 100) {
+					countUp = "0" + bulletCount;				
+				} else {
+					countUp = "" + bulletCount;				
+				}
+				
+				g.setFont(myFontCounter);
+				g.setColor(new Color(224, 145, 5));
+				if (pointVal > 0) {
+					pointVal -= 10;
+					if (pointVal < 0) {
+						pointVal = 0;
+					}
+				}
+				g.drawString(countdown, 143, 219);
+				
+				g.setColor(new Color(250, 226, 147));
+				if (bulletCount < numBullets) {
+					bulletCount++;
+				}
+				g.drawString(countUp, 143, 569);
+			} else {
+				g.setFont(myFontCounter);
+				g.setColor(new Color(224, 145, 5));
+				g.drawString(levelMessage, 250, 430);
 			}
-			g.drawString(countdown, 143, 219);
 			
-			g.setColor(new Color(250, 226, 147));
-			if (bulletCount < numBullets) {
-				bulletCount++;
-			}
-			g.drawString(countUp, 143, 569);
 		}
 		
 	}
