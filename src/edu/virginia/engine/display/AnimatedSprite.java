@@ -29,7 +29,7 @@ public class AnimatedSprite extends Sprite {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public AnimatedSprite(String id, String spriteSheet, int spriteWidth, int spriteHeight, int rows, int cols, int startFrame) {
+	public AnimatedSprite(String id, String spriteSheet, int spriteWidth, int spriteHeight, int rows, int cols, int startFrame, int endFrame) {
 		super(id);
 		
 		//read and parse out sprite sheet
@@ -45,7 +45,10 @@ public class AnimatedSprite extends Sprite {
 		    for (int j = 0; j < cols; j++) {
 		    	this.frames.add(bigImg.getSubimage(j * spriteWidth, i * spriteHeight, spriteWidth, spriteHeight));
 		    }
-		}	
+		}
+		
+		this.startIndex = this.currentFrame = startFrame;
+		this.endIndex = endFrame;
 		
 		this.setImage(this.frames.get(startFrame));
 	}

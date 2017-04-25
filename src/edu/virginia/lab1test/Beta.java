@@ -1,22 +1,32 @@
 package edu.virginia.lab1test;
 
-import edu.virginia.engine.display.Game;
-
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-import edu.virginia.engine.display.DisplayObjectContainer;
-import edu.virginia.engine.display.Sprite;
 import edu.virginia.engine.display.AnimatedSprite;
+import edu.virginia.engine.display.DisplayObjectContainer;
+import edu.virginia.engine.display.Game;
+import edu.virginia.engine.display.Sprite;
 import edu.virginia.engine.display.Tween;
 import edu.virginia.engine.display.TweenJuggler;
-import edu.virginia.engine.events.EventDispatcher;
 import edu.virginia.engine.util.SoundManager;
 
 
 public class Beta extends Game {
+	
+	//create the font to use. Specify the size!
+	Font myFontSidebar;
+	Font myFontLevel;
+	Font myFontTimer;
+	Font myFontPU;
 	
 	boolean start = true;
 	boolean pause = true;
@@ -25,7 +35,8 @@ public class Beta extends Game {
 	boolean gameLose = false;
 
 //	Sprite trump = new Sprite("trump", "BoxTrump.jpg");
-	AnimatedSprite trump = new AnimatedSprite("Trump", "trump-spritesheet.png", 94, 150, 2, 8, 0);
+	AnimatedSprite trump = new AnimatedSprite("Trump", "trump-spritesheet.png", 94, 150, 2, 8, 0, 7);
+
 	boolean isWalking = false;
 	static SoundManager sound = new SoundManager();
 	
@@ -72,7 +83,7 @@ public class Beta extends Game {
 	int hilTimer = 60;
 	
 //	Sprite hillary = new Sprite("hillary" , "BoxHillary.jpg");
-	AnimatedSprite hillary = new AnimatedSprite("Hillary", "hillary-spritesheet.png", 88, 150, 2, 8, 0);
+	AnimatedSprite hillary = new AnimatedSprite("Hillary", "hillary-spritesheet.png", 88, 150, 2, 8, 0, 7);
 	Tween hillaryX = new Tween(hillary);
 
 	ArrayList<Sprite> bullet = new ArrayList<Sprite>();
@@ -86,14 +97,14 @@ public class Beta extends Game {
 	int hilHealthVal = 100;
 	int numBullets = 0;
 	int bulletVY = 10;
-	int fireballVY = 15;
+	int fireballVY = 8;
 	
 	int victory = 0;
 	//0 = still playing, 1 = win!, -1 = lose!
 	
 	
 	/*************************** LEVEL SWITCHING VARIABLES ***************************/
-	int level = 1;	
+	int level = 3;	
 	//randomNum = rand.nextInt((max - min) + 1) + min;
 	int[] goodGeneration = {0, 90, 120, 150};
 	int[] goodGenerationMin = {0, 0, 30, 60};
@@ -124,9 +135,16 @@ public class Beta extends Game {
 	int slowDownTimer = 300;
 	int slowDownTimerMax = 300; //this is really dumb but trust me it will make changing values easier
 	
+
+	String points = "";
+	String time = "";
+	String levelString = "";
+	String bullets = "";
+	String hilHealth = "";
 	String invul = ""; //invulnerable string
 	String sd = ""; //slow down string
 	String levelMessage = "";
+	String levelMessage2 = "";
 	boolean levelLimbo = false;
 	int limboTimer = 0;
 	
@@ -161,6 +179,26 @@ public class Beta extends Game {
 		//200 TO 600 IS THE GAME SCREEN
 		//BOUNDS TO CHECK FOR--ITEMS SHOULD ONLY GENERATE BETWEEN 200 < X < 600
 		
+		/****** GAME FONTS ******/
+		try {
+		    //create the font to use. Specify the size!
+		    myFontSidebar = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(12f);
+		    myFontLevel = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(30f);
+		    myFontTimer = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(108f);
+
+		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		    //register the font
+		    ge.registerFont(myFontSidebar);
+		    ge.registerFont(myFontLevel);
+		    ge.registerFont(myFontTimer);
+		} catch (IOException e) {
+		    e.printStackTrace();
+		} catch(FontFormatException e) {
+		    e.printStackTrace();
+		}
+//		yourSwingComponent.setFont(customFont);
+
+		
 		
 		/******* ADD SPRITES *******/
 		this.addChild(background);
@@ -184,19 +222,21 @@ public class Beta extends Game {
 		
 		/******* POSITION SPRITES *******/
 		trump.setPosition(350, 530);
+
 		//set hillary off screen
 		hillary.setPosition(610, 50);
 		
-		health1.setPosition(10, 10);
-		health2.setPosition(40, 10);
-		health3.setPosition(70, 10);
-		health4.setPosition(100, 10);
-		health5.setPosition(130, 10);
-		health6.setPosition(10, 40);
-		health7.setPosition(40, 40);
-		health8.setPosition(70, 40);
-		health9.setPosition(100, 40);
-		health10.setPosition(130, 40);
+		health1.setPosition(10, 45);
+		health2.setPosition(47, 45);
+		health3.setPosition(84, 45);
+		health4.setPosition(121, 45);
+		health5.setPosition(158, 45);
+		
+		health6.setPosition(10, 75);
+		health7.setPosition(47, 75);
+		health8.setPosition(84, 75);
+		health9.setPosition(121, 75);
+		health10.setPosition(158, 75);
 		
 		/******* SETUP TWEENS *******/
 		//hillary goes from x = 250 to 490
@@ -233,6 +273,7 @@ public class Beta extends Game {
 				screen.addChild(screenpause);
 			}
 			if (gameRestart) {
+				
 				//reset hillary
 
 				//set hillary off screen
@@ -268,10 +309,6 @@ public class Beta extends Game {
 				power.clear();
 				bullet.clear();
 				fireball.clear();
-				
-				//reset PU status messages
-				invul = "";
-				sd = "";
 				
 				//get out of limbo
 				levelLimbo = false;
@@ -375,6 +412,10 @@ public class Beta extends Game {
 				invul = "";
 				sd = "";
 				
+
+				sound.LoadSoundEffect("levelend", "levelend.wav");
+				sound.PlaySoundEffect("levelend");
+				
 				//begin limbo
 				levelLimbo = true;
 			}
@@ -420,7 +461,8 @@ public class Beta extends Game {
 				//FIREBALL OBJECTS
 				if (frameCounterFB == currentTimerFB) {
 					//generate new fireball object
-					fireball.add(new Sprite("fireball" + fireballCounter, "fireball.png"));
+					fireball.add(
+							new Sprite("fireball" + fireballCounter, "fireball.png"));
 					//set fireball to hil's position
 					fireball.get(fireball.size() - 1).setPosition(hillary.getPositionX(), hillary.getPositionY());
 					//turn on physics for this object
@@ -715,15 +757,20 @@ public class Beta extends Game {
 			}
 			
 		} else {
+			//END OF LEVEL
+			
 			limboTimer++;
 			//0 to 180 and then 180 to 360
 			if (limboTimer < 180 && limboTimer > 0) {
 				levelMessage = "End of Level | Final Score: " + pointVal;
+				levelMessage2 = "";
 			} else if (limboTimer < 360 && limboTimer > 180) {
 				if (level == 4) {
-					levelMessage = "A wild Hillary appeared! | Trump gathered " + pointVal/10 + " bullets";
+					levelMessage = "A wild Hillary appeared!";
+					levelMessage2 = "ATrump gathered " + pointVal/10 + " bullets";
 				} else {
 					levelMessage = "Starting Level " + level;
+					levelMessage2 = "";
 				}
 				
 			} else if (limboTimer > 360) {
@@ -758,61 +805,9 @@ public class Beta extends Game {
 //		}
 		
 		//reset iswalking
-		isWalking = false;		
+		isWalking = false;	
 		
-		/* Make sure trump is not null. Sometimes Swing can auto cause an extra frame to go before everything is initialized */
-		if(trump != null) trump.update(pressedKeys);
-	}
-	
-	/**
-	 * Engine automatically invokes draw() every frame as well. If we want to make sure trump gets drawn to
-	 * the screen, we need to make sure to override this method and call trump's draw method.
-	 * */
-	@Override
-	public void draw(Graphics g){
-		super.draw(g);
-		if (!start && !pause) {
-
-//			String health = "Health: " + healthVal;
-
-
-			if (level < 4) {
-				String points = "Points: " + pointVal;
-				String time = "Time Remaining: " + Math.floor(timeVal/60);
-				
-				if(invulnerable){
-					invul = "Invulnerable for: " + Math.floor(invulnerableTimer/60);
-				} else {
-					invul = "";
-				}
-				
-				if(slowDown){
-					sd = "Slowing down for: " + Math.floor(slowDownTimer/60);
-				} else {
-					sd = "";
-				}
-				
-				g.drawString("Level: " + level, 15, 75);
-				g.drawString(time, 15, 95);
-//				g.drawString(health, 15, 60);
-				g.drawString(points, 15, 115);
-				g.drawString(invul, 15, 135);
-				g.drawString(sd, 15, 155);			
-			} else if (level == 4) {
-				String bullets = "Bullets left: " + numBullets;
-				String hilHealth = "Hillary's Health: " + hilHealthVal;
-				
-//				g.drawString(health, 15, 20);
-				g.drawString(bullets, 15, 75);
-				g.drawString(hilHealth, 15, 95);
-			}
-			
-			if (levelLimbo) {
-				g.drawString(levelMessage, 250, 200);
-			}
-		}
-		
-		/************ SCREEN STATES ************/
+		/************ VICTORY STATES/SCREEN STATES ************/
 		if (healthVal <= 0) {
 			gameLose = true;
 			gameRestart = true;
@@ -831,9 +826,79 @@ public class Beta extends Game {
 			}			
 		}
 		
+		/* Make sure trump is not null. Sometimes Swing can auto cause an extra frame to go before everything is initialized */
+		if(trump != null) trump.update(pressedKeys);
+	}
+	
+	/**
+	 * Engine automatically invokes draw() every frame as well. If we want to make sure trump gets drawn to
+	 * the screen, we need to make sure to override this method and call trump's draw method.
+	 * */
+	@Override
+	public void draw(Graphics g){
+		g.setColor(new Color(250,226,147));
+		g.fillRect(0, 0, 200, 700);
+		
+		g.setFont(myFontSidebar);
+		g.setColor(Color.BLACK);		
+
+
+		if (level < 4) {
+			points = "Points: " + pointVal;
+			time = "" + (int)Math.floor(timeVal/60);
+			levelString = "Level " + level;
+			
+			if(invulnerable){
+				invul = "Invulnerable for: " + Math.floor(invulnerableTimer/60);
+			} else {
+				invul = "";
+			}
+			
+			if(slowDown){
+				sd = "Slowing down for: " + Math.floor(slowDownTimer/60);
+			} else {
+				sd = "";
+			}
+			g.setFont(myFontLevel);
+			g.drawString(levelString, 10, 34);
+			
+			g.setFont(myFontTimer);
+			g.setColor(Color.RED);
+			g.drawString(time, 10, 195);
+			
+			g.setFont(myFontSidebar);
+			g.setColor(Color.BLACK);
+			
+			g.drawString(points, 15, 300);				
+			g.drawString(invul, 15, 320);
+			g.drawString(sd, 15, 340);			
+		} else if (level == 4) {
+			bullets = "Bullets left: " + numBullets;
+			hilHealth = "Hillary's Health: " + hilHealthVal;
+			
+			g.setFont(myFontLevel);
+			g.drawString("FIGHT!!", 10, 34);
+			
+			g.setFont(myFontSidebar);
+			g.setColor(Color.BLACK);
+			g.drawString(bullets, 15, 200);
+			g.drawString(hilHealth, 15, 220);
+		}
+		
+		if (levelLimbo) {
+			g.drawString(levelMessage, 250, 200);
+			g.drawString(levelMessage2, 250, 210);
+			levelMessage = "";
+			levelMessage2 = "";
+		}
+		
+		
+		
 		
 		/* Same, just check for null in case a frame gets thrown in before trump is initialized */
 //		if(trump != null) trump.draw(g);
+
+		super.draw(g);
 	}
 
 	/**

@@ -27,7 +27,7 @@ public class BossBattlePrototype extends Game {
 	int timer = 60;
 
 	/* Create a sprite object for our game. We'll use link */
-	AnimatedSprite link = new AnimatedSprite("Link", "link-spritesheet.png", 120, 127, 4, 10, 10);
+	AnimatedSprite link = new AnimatedSprite("Link", "link-spritesheet.png", 120, 127, 4, 10, 10, 13);
 	Tween linkEnter1 = new Tween(link);
 	Tween linkEnter2 = new Tween(link);
 	
