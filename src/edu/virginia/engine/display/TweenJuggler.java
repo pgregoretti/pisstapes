@@ -24,6 +24,9 @@ public class TweenJuggler {
 		return instance;
 	}
 	
+	public void clear(){
+		tweens.clear();
+	}
 	
 
 	public void add(Tween tween){

@@ -233,6 +233,13 @@ public class Beta extends Game {
 				screen.addChild(screenpause);
 			}
 			if (gameRestart) {
+				//reset hillary
+
+				//set hillary off screen
+				TweenJuggler.getInstance().clear();
+				hillary.setPosition(610, 50);
+				hillary.setVisible(false);
+				
 				//reset objects
 				for (int i = 0; i < good.size(); i++) {
 					//remove from disp tree
@@ -246,11 +253,21 @@ public class Beta extends Game {
 					//remove from disp tree
 					allobjects.removeChild(power.get(i));
 				}
+				for (int i = 0; i < bullet.size(); i++) {
+					//remove from disp tree
+					allobjects.removeChild(bullet.get(i));
+				}
+				for (int i = 0; i < fireball.size(); i++) {
+					//remove from disp tree
+					allobjects.removeChild(fireball.get(i));
+				}
 				
 				//clear arraylists
 				good.clear();
 				bad.clear();
 				power.clear();
+				bullet.clear();
+				fireball.clear();
 				
 				//reset PU status messages
 				invul = "";
@@ -331,7 +348,7 @@ public class Beta extends Game {
 			}
 			
 			//update Trump's bullet inventory
-			numBullets = 500;
+			numBullets = pointVal/10;
 			
 			if (timeVal <= 0 && !levelLimbo){
 				level++;
