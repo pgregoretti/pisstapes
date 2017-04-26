@@ -56,6 +56,7 @@ public class Beta extends Game {
 	Sprite screenboss = new Sprite("ScreenBoss", "screenboss.png");
 	Sprite screenwin = new Sprite("ScreenWin", "screenwin.png");
 	Sprite screenlose = new Sprite("ScreenLose", "screenlose.png");
+	Sprite levelBackground = new Sprite("LevelBackground", "trumptower.png");
 	
 	/*************************** BASIC LEVEL VARIABLES ***************************/
 
@@ -217,6 +218,7 @@ public class Beta extends Game {
 		this.addChild(person);
 		this.addChild(screen);
 		background.addChild(sidebar);
+		background.addChild(levelBackground);
 		for (int i = 1; i < health.length; i++) {
 			healthContainer.addChild(health[i]);
 		}
@@ -232,6 +234,7 @@ public class Beta extends Game {
 		
 		/******* POSITION SPRITES *******/
 		trump.setPosition(350, 530);
+		levelBackground.setPosition(200, 0);
 
 		//set hillary off screen
 		hillary.setPosition(610, 50);
@@ -522,6 +525,8 @@ public class Beta extends Game {
 							allobjects.removeChild(bullet.get(i));
 							bullet.remove(i);
 							i--;
+							sound.LoadSoundEffect("wrong", "wrong.wav");
+							sound.PlaySoundEffect("wrong");
 						} else if (bullet.get(i).getPositionY() <= 0) { //else bullet went up off screen
 							allobjects.removeChild(bullet.get(i));
 							bullet.remove(i);
@@ -543,6 +548,8 @@ public class Beta extends Game {
 							allobjects.removeChild(fireball.get(i));
 							fireball.remove(i);
 							i--;
+							sound.LoadSoundEffect("bullshit", "bullshit.wav");
+							sound.PlaySoundEffect("bullshit");
 						} else if (fireball.get(i).getPositionY() >= 640) {
 							allobjects.removeChild(fireball.get(i));
 							fireball.remove(i);
@@ -809,6 +816,16 @@ public class Beta extends Game {
 				} else {
 					screen.removeChild(screennext);
 				}
+				
+				//add new bg screen
+				if(level == 2){
+					levelBackground.setImage(levelBackground.readImage("mittdinner.png"));
+				}
+				
+				if(level == 3){
+					levelBackground.setImage(levelBackground.readImage("lockerroom.png"));
+				}
+				
 				//get out of limbo
 				levelLimbo = false;
 				//reset limbo timer
