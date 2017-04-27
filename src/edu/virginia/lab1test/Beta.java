@@ -30,6 +30,8 @@ public class Beta extends Game {
 	Font myFontCounter;
 	
 	boolean start = true;
+	boolean insidestart = false;
+	boolean start2 = true;
 	boolean pause = true;
 	boolean gameRestart = false;
 	boolean gameWin = false;
@@ -56,11 +58,14 @@ public class Beta extends Game {
 	Sprite screenboss = new Sprite("ScreenBoss", "screenboss.png");
 	Sprite screenwin = new Sprite("ScreenWin", "screenwin.png");
 	Sprite screenlose = new Sprite("ScreenLose", "screenlose.png");
-	Sprite levelBackground = new Sprite("LevelBackground", "trumptower.png");
+	
+	String[] bgImg = {"", "backgroundlevel1.png", "backgroundlevel2.png", "backgroundlevel3.png", "backgroundlevel4.png"};
+	Sprite levelBackground = new Sprite("LevelBackground");
 	
 	/*************************** BASIC LEVEL VARIABLES ***************************/
 
-	String[] goodImg = {"MAGA.png", "piss.png", "toupee.png"};
+	
+	String[] goodImg = {"maga.png", "piss.png", "babybottle.png"};
 	String[] badImg = {"imwithher.png", "constitution.png", "holywater.png"};
 	
 	ArrayList<Sprite> good = new ArrayList<Sprite>();
@@ -169,10 +174,10 @@ public class Beta extends Game {
 	Sprite[] health = {health1, health1, health2, health3, health4, health5, health6, health7, health8, health9, health10};
 	int healthVal = 10;
 	int pointVal = 0;
-	int timeVal = 3600;
-	int timeValMax = 3600;
-//	int timeVal = 300;
-//	int timeValMax = 300;
+//	int timeVal = 3600;
+//	int timeValMax = 3600;
+	int timeVal = 300;
+	int timeValMax = 300;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -193,7 +198,7 @@ public class Beta extends Game {
 		    //create the font to use. Specify the size!
 		    myFontSidebar = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(12f);
 		    myFontLevel = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(30f);
-		    myFontTimer = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(108f);
+		    myFontTimer = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(110f);
 		    myFontCounter = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(125f);
 
 		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -224,7 +229,6 @@ public class Beta extends Game {
 		}
 		person.addChild(trump);
 		person.addChild(hillary);
-		screen.addChild(screenstart);
 		
 		/******* ASSIGN ANIMATIONS *******/
 		trump.setAnimation("right", 0, 7);
@@ -276,6 +280,14 @@ public class Beta extends Game {
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
 		if (start) {
+			insidestart = true;
+			screen.removeAll();
+			screen.addChild(screenstart);
+			levelBackground.setImage(levelBackground.readImage(bgImg[level]));
+			this.pause();
+		} else if (start2) {
+			screen.removeAll();
+			screen.addChild(screenlose);
 			this.pause();
 		} else if (pause) {
 			if (gameWin) {
@@ -286,6 +298,22 @@ public class Beta extends Game {
 				screen.addChild(screenpause);
 			}
 			if (gameRestart) {
+				
+				//reset game
+				start = true;
+				insidestart = false;
+				start2 = true;
+				pause = true;
+				gameRestart = false;
+				gameWin = false;
+				gameLose = false;
+
+				//reset level
+				level = 1;
+				
+				//reset background
+				levelBackground.setImage(levelBackground.readImage(bgImg[level]));
+				
 				
 				//reset hillary
 
@@ -327,8 +355,6 @@ public class Beta extends Game {
 				levelLimbo = false;
 				//reset limbo timer
 				limboTimer = 0;
-				//reset level
-				level = 1;
 				//reset level timer
 				timeVal = timeValMax;
 				//reset player health
@@ -348,11 +374,6 @@ public class Beta extends Game {
 				invulnerableTimer = invulnerableTimerMax;
 				slowDown = false;
 				slowDownTimer = slowDownTimerMax; 
-				//reset random booleans
-				pause = false;
-				gameRestart = false;
-				gameWin = false;
-				gameLose = false;
 				
 				numBullets = 0;
 				bulletCount = 0;
@@ -818,13 +839,7 @@ public class Beta extends Game {
 				}
 				
 				//add new bg screen
-				if(level == 2){
-					levelBackground.setImage(levelBackground.readImage("mittdinner.png"));
-				}
-				
-				if(level == 3){
-					levelBackground.setImage(levelBackground.readImage("lockerroom.png"));
-				}
+				levelBackground.setImage(levelBackground.readImage(bgImg[level]));
 				
 				//get out of limbo
 				levelLimbo = false;
@@ -920,7 +935,7 @@ public class Beta extends Game {
 			
 			g.setFont(myFontTimer);
 			g.setColor(Color.RED);
-			g.drawString(time, 10, 195);
+			g.drawString(time, 5, 195);
 			
 			g.setFont(myFontSidebar);
 			g.setColor(Color.BLACK);
@@ -1006,18 +1021,20 @@ public class Beta extends Game {
 	public void keyReleased(KeyEvent e) {
 		super.keyReleased(e);
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-			if (this.isRunning()) {
-				pause = true;
-			} else {
-				this.start();
-				pause = false;
-				if (start) {
-					start = false;
-					screen.removeChild(screenstart);
+			if (!levelLimbo) {
+				if (this.isRunning()) {
+					pause = true;
 				} else {
 					screen.removeAll();
+					this.start();
+					pause = false;
+					if (insidestart && start) {
+						start = false;
+					} else if (insidestart && start2) {
+						start2 = false;
+					}
 				}
-			}
+			}			
 		}
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 			
