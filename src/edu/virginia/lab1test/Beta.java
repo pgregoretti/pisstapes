@@ -113,19 +113,23 @@ public class Beta extends Game {
 	
 	/*************************** LEVEL SWITCHING VARIABLES ***************************/
 	int level = 1;	
+	
+	//first entry in the array is a buffer because level goes from 1-4 (not 0-4)
 	//randomNum = rand.nextInt((max - min) + 1) + min;
-	int[] goodGeneration = {90, 120, 150, 150};
+	int[] goodGeneration = {0, 120, 150, 150};
 	int[] goodGenerationMin = {0, 0, 30, 60};
 	//0 to 90
 	//30 to 120
 	//60 to 150
-	int[] badGeneration = {180, 150, 120, 120};
+	
+	int[] badGeneration = {0, 150, 120, 120};
 	int[] badGenerationMin = {0, 60, 30, 0};
 	//60 to 180
 	//30 to 150
 	//0 to 120
-	int[] powerGeneration = {240, 240, 180, 120};
-	int[] powerGenerationMin = {120, 120, 60, 0};
+	
+	int[] powerGeneration = {0, 240, 180, 120};
+	int[] powerGenerationMin = {0, 120, 60, 0};
 	//120 to 240
 	//60 to 180
 	//0 to 120
@@ -654,31 +658,38 @@ public class Beta extends Game {
 				//0 = kiss, 1 = meatloaf, 2 = tacosalad
 				
 				if (frameCounterPower == currentTimerPower) {
+					boolean puGenerated = false;
 					//generate new PU object
 					if (powerUpNum == 0) {
 						//kiss slows everything down
 						power.add(new Sprite("powerKiss" + powerCounter, "kiss.png"));
+						puGenerated = true;
 					} else if (powerUpNum == 1) {
 						//meatloaf is health so don't generate if health is full
 						if(healthVal < 10){
 							power.add(new Sprite("powerMeatloaf" + powerCounter, "meatloaf.png"));
+							puGenerated = true;
 						}
 						//taco salad is invulnerability
 					} else if (powerUpNum == 2) {
 						power.add(new Sprite("powerTacoSalad" + powerCounter, "tacosalad.png"));
+						puGenerated = true;
 					}
 					
-					//generate a random x position between 200 and 600 (including bounds)
-					power.get(power.size() - 1).setPosition(randomNum.nextInt(560 - 200 + 1) + 200, 0);
-					//turn on physics for this object
-					power.get(power.size() - 1).setPhysics(true);
-					//make PU fall down at currentVY
-					power.get(power.size() - 1).setVY(currentVY);
-					//add to display tree
-					allobjects.addChild(power.get(power.size() - 1));
+					if (puGenerated) {
+						//generate a random x position between 200 and 600 (including bounds)
+						power.get(power.size() - 1).setPosition(randomNum.nextInt(560 - 200 + 1) + 200, 0);
+						//turn on physics for this object
+						power.get(power.size() - 1).setPhysics(true);
+						//make PU fall down at currentVY
+						power.get(power.size() - 1).setVY(currentVY);
+						//add to display tree
+						allobjects.addChild(power.get(power.size() - 1));
+						
+						//increment goodCounter (kind of like an item ID)
+						powerCounter++;
+					}
 					
-					//increment goodCounter (kind of like an item ID)
-					powerCounter++;
 					//a PU object will generate between minX to maxX frames
 					//randomNum = rand.nextInt((max - min) + 1) + min;
 					currentTimerPower = randomNum.nextInt(powerGeneration[level] - powerGenerationMin[level] + 1) + powerGenerationMin[level];
