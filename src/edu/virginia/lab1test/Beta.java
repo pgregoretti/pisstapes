@@ -108,8 +108,8 @@ public class Beta extends Game {
 	
 	int hilHealthVal = 100;
 	int numBullets = 0;
-	int bulletVY = 10;
-	int fireballVY = 8;
+	int bulletVY = 8;
+	int fireballVY = 12;
 	
 	int bulletCount = 0;
 	
@@ -180,11 +180,11 @@ public class Beta extends Game {
 	Sprite health10 = new Sprite("Health10", "heart.png");
 	Sprite[] health = {health1, health1, health2, health3, health4, health5, health6, health7, health8, health9, health10};
 	int healthVal = 10;
-	int pointVal = 0;
-	int timeVal = 3600;
-	int timeValMax = 3600;
-//	int timeVal = 300;
-//	int timeValMax = 300;
+	int pointVal = 100;
+//	int timeVal = 3600;
+//	int timeValMax = 3600;
+	int timeVal = 300;
+	int timeValMax = 300;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -583,7 +583,7 @@ public class Beta extends Game {
 					//increment fireballCounter (kind of like an item ID)
 					fireballCounter++;
 					//a fireball object will generate between 0 to 180 frames
-					currentTimerFB = randomNum.nextInt(180);
+					currentTimerFB = randomNum.nextInt(120);
 					frameCounterFB = 0;
 				} else {
 					frameCounterFB++;
