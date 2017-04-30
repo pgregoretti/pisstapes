@@ -184,8 +184,8 @@ public class Beta extends Game {
 	int pointVal = 100;
 //	int timeVal = 3600;
 //	int timeValMax = 3600;
-	int timeVal = 300;
-	int timeValMax = 300;
+	int timeVal = 100;
+	int timeValMax = 100;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -345,11 +345,23 @@ public class Beta extends Game {
 			if (gameWin) {
 				screen.addChild(screenwin);
 			} else if (gameLose) {
+				sound.LoadSoundEffect("gameover", "gameover.wav");
+				sound.LoadSoundEffect("losers", "losers.wav");
+				sound.PlaySoundEffect("gameover");
+				sound.PlaySoundEffect("losers");
 				screen.addChild(screenlose);
 			} else {
 				screen.addChild(screenpause);
 			}
 			if (gameRestart) {
+				if (sound.contains("battlesong")) {
+					sound.StopMusic("battlesong");
+				}
+				if (sound.contains("march")) {
+					sound.StopMusic("march");
+				}
+				sound.LoadMusic("march", "march.wav");
+				sound.PlayMusic("march");
 				
 				//reset game
 				start = true;
@@ -394,6 +406,10 @@ public class Beta extends Game {
 				for (int i = 0; i < fireball.size(); i++) {
 					//remove from disp tree
 					allobjects.removeChild(fireball.get(i));
+				}
+				for(int i = 1; i< hilHealthArray.length; i++){
+					sidebar.addChild(hilHealthArray[i]);
+					hilHealthArray[i].setVisible(false);
 				}
 				
 				//clear arraylists
