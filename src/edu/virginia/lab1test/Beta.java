@@ -357,6 +357,9 @@ public class Beta extends Game {
 				if (sound.contains("battlesong")) {
 					sound.StopMusic("battlesong");
 				}
+				if (sound.contains("march")) {
+					sound.StopMusic("march");
+				}
 				sound.LoadMusic("march", "march.wav");
 				sound.PlayMusic("march");
 				
