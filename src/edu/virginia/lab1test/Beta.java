@@ -184,8 +184,8 @@ public class Beta extends Game {
 	int pointVal = 100;
 //	int timeVal = 3600;
 //	int timeValMax = 3600;
-	int timeVal = 300;
-	int timeValMax = 300;
+	int timeVal = 100;
+	int timeValMax = 100;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -350,6 +350,11 @@ public class Beta extends Game {
 				screen.addChild(screenpause);
 			}
 			if (gameRestart) {
+				if (sound.contains("battlesong")) {
+					sound.StopMusic("battlesong");
+				}
+				sound.LoadMusic("march", "march.wav");
+				sound.PlayMusic("march");
 				
 				//reset game
 				start = true;
