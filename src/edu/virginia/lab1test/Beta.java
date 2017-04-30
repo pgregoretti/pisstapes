@@ -53,6 +53,7 @@ public class Beta extends Game {
 	
 	Sprite sidebar = new Sprite("Sidebar", "sidebar.png");
 	Sprite screenstart = new Sprite("ScreenStart", "screenstart.png");
+	Sprite screeninstructions = new Sprite("ScreenInstructions", "screeninstructions.png");
 	Sprite screenpause = new Sprite("ScreenPause", "screenpause.png");
 	Sprite screennext = new Sprite("ScreenNext", "screennext.png");
 	Sprite screenboss = new Sprite("ScreenBoss", "screenboss.png");
@@ -338,7 +339,7 @@ public class Beta extends Game {
 			this.pause();
 		} else if (start2) {
 			screen.removeAll();
-			screen.addChild(screenlose);
+			screen.addChild(screeninstructions);
 			this.pause();
 		} else if (pause) {
 			if (gameWin) {
