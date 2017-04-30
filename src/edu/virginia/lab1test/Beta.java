@@ -940,8 +940,8 @@ public class Beta extends Game {
 				//reset power up status
 				invulnerable = false;
 				invulnerableTimer = invulnerableTimerMax;
-				inv.setVisible(false);
-				slow.setVisible(false);
+//				inv.setVisible(false);
+//				slow.setVisible(false);
 				slowDown = false;
 				slowDownTimer = slowDownTimerMax; 
 			}
