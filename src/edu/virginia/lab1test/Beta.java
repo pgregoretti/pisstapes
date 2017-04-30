@@ -345,6 +345,10 @@ public class Beta extends Game {
 			if (gameWin) {
 				screen.addChild(screenwin);
 			} else if (gameLose) {
+				sound.LoadSoundEffect("gameover", "gameover.wav");
+				sound.LoadSoundEffect("losers", "losers.wav");
+				sound.PlaySoundEffect("gameover");
+				sound.PlaySoundEffect("losers");
 				screen.addChild(screenlose);
 			} else {
 				screen.addChild(screenpause);
@@ -399,6 +403,10 @@ public class Beta extends Game {
 				for (int i = 0; i < fireball.size(); i++) {
 					//remove from disp tree
 					allobjects.removeChild(fireball.get(i));
+				}
+				for(int i = 1; i< hilHealthArray.length; i++){
+					sidebar.addChild(hilHealthArray[i]);
+					hilHealthArray[i].setVisible(false);
 				}
 				
 				//clear arraylists
