@@ -188,6 +188,19 @@ public class Beta extends Game {
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
+	//Make Hillary's health!
+	Sprite hilhealth1 = new Sprite("hilHealth1", "hilhealth.png");
+	Sprite hilhealth2 = new Sprite("hilHealth2", "hilhealth.png");
+	Sprite hilhealth3 = new Sprite("hilHealth3", "hilhealth.png");
+	Sprite hilhealth4 = new Sprite("hilHealth4", "hilhealth.png");
+	Sprite hilhealth5 = new Sprite("hilHealth5", "hilhealth.png");
+	Sprite hilhealth6 = new Sprite("hilHealth6", "hilhealth.png");
+	Sprite hilhealth7 = new Sprite("hilHealth7", "hilhealth.png");
+	Sprite hilhealth8 = new Sprite("hilHealth8", "hilhealth.png");
+	Sprite hilhealth9 = new Sprite("hilHealth9", "hilhealth.png");
+	Sprite hilhealth10 = new Sprite("hilHealth10", "hilhealth.png" );
+	Sprite[] hilHealthArray = {hilhealth1, hilhealth1, hilhealth2, hilhealth3, hilhealth4, hilhealth5, hilhealth6, hilhealth7, hilhealth8, hilhealth9, hilhealth10};
+	
 	/**
 	 * Constructor. See constructor in Game.java for details on the parameters given
 	 * */
@@ -234,6 +247,11 @@ public class Beta extends Game {
 		for (int i = 1; i < health.length; i++) {
 			healthContainer.addChild(health[i]);
 		}
+		
+		for(int i = 1; i< hilHealthArray.length; i++){
+			sidebar.addChild(hilHealthArray[i]);
+			hilHealthArray[i].setVisible(false);
+		}
 		person.addChild(trump);
 		person.addChild(hillary);
 		
@@ -273,6 +291,20 @@ public class Beta extends Game {
 		health8.setPosition(84, 75);
 		health9.setPosition(121, 75);
 		health10.setPosition(158, 75);
+		
+		
+		hilhealth1.setPosition(10, 300);
+		hilhealth2.setPosition(47, 300);
+		hilhealth3.setPosition(84, 300);
+		hilhealth4.setPosition(121, 300);
+		hilhealth5.setPosition(158, 300);
+		
+		hilhealth6.setPosition(10, 330);
+		hilhealth7.setPosition(47, 330);
+		hilhealth8.setPosition(84, 330);
+		hilhealth9.setPosition(121, 330);
+		hilhealth10.setPosition(158, 330);
+		
 		
 		/******* SETUP TWEENS *******/
 		//hillary goes from x = 250 to 490
@@ -393,7 +425,7 @@ public class Beta extends Game {
 				
 				numBullets = 0;
 				bulletCount = 0;
-				
+
 				countdown = "";
 				countUp = "";
 			}
@@ -502,6 +534,10 @@ public class Beta extends Game {
 				
 				//Make hil visible
 				hillary.setVisible(true);
+				for(int i =0; i<hilHealthArray.length; i++){
+					hilHealthArray[i].setVisible(true);
+				}
+				
 				
 				/*************************** HILLARY'S RANDOM PATH ***************************/
 				if(!TweenJuggler.getInstance().getTweens().contains(hillaryX)){
@@ -559,6 +595,8 @@ public class Beta extends Game {
 						//CHECK FOR COLLISIONS
 						if(bullet.get(i).collidesWith(hillary)){
 							hilHealthVal -= 10;
+							sidebar.removeChild(hilHealthArray[hilHealthVal/10 + 1]);
+							//REMOVE HILLARY'S HEALTH HERE
 							allobjects.removeChild(bullet.get(i));
 							bullet.remove(i);
 							i--;
@@ -894,6 +932,8 @@ public class Beta extends Game {
 				//reset power up status
 				invulnerable = false;
 				invulnerableTimer = invulnerableTimerMax;
+				inv.setVisible(false);
+				slow.setVisible(false);
 				slowDown = false;
 				slowDownTimer = slowDownTimerMax; 
 			}
@@ -948,6 +988,7 @@ public class Beta extends Game {
 			points = "Points: " + pointVal;
 			if ((int)Math.floor(timeVal/60) < 10) {
 				time = "0" + (int)Math.floor(timeVal/60);
+				g.drawString("Current PowerUps:", 15, 290);
 			} else {
 				time = "" + (int)Math.floor(timeVal/60);
 			}
@@ -973,14 +1014,14 @@ public class Beta extends Game {
 			
 			g.setFont(myFontSidebar);
 			g.setColor(Color.BLACK);
-			g.drawString("Current PowerUps:", 15, 290);
 			g.drawString(points, 15, 250);				
 			g.drawString(invul, 15, 410);
 			g.drawString(sd, 15, 320);			
 		} else if (level == 4) {
 			bullets = "Bullets left: " + numBullets;
-			hilHealth = "Hillary's Health: " + hilHealthVal;
-			
+			hilHealth = "";
+			g.drawString("Hillary's Health", 15, 290);
+
 			g.setFont(myFontLevel);
 			g.drawString("FIGHT!!", 10, 34);
 			
