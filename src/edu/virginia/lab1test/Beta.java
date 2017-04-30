@@ -315,7 +315,7 @@ public class Beta extends Game {
 		/******* ADD TWEENS *******/
 		
 		/******* ADD SOUNDS *******/
-		sound.LoadMusic("pizza", "pizza.wav");		
+
 		
 	}
 	
@@ -328,6 +328,9 @@ public class Beta extends Game {
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
 		if (start) {
+			if (!sound.contains("march")) {	
+				sound.LoadMusic("march", "march.wav");
+			}
 			insidestart = true;
 			screen.removeAll();
 			screen.addChild(screenstart);
@@ -505,6 +508,7 @@ public class Beta extends Game {
 						sound.LoadSoundEffect("levelend", "levelend.wav");
 						sound.PlaySoundEffect("levelend");	
 					} else {
+						sound.StopMusic("march");
 						sound.LoadSoundEffect("hillaryintro", "hillaryintro.wav");
 						sound.PlaySoundEffect("hillaryintro");							
 					}
@@ -906,6 +910,9 @@ public class Beta extends Game {
 			if (limboTimer > 360) {
 				if (level == 4) {
 					screen.removeChild(screenboss);
+					if (!sound.contains("battlesong")) {	
+						sound.LoadMusic("battlesong", "battlesong.wav");
+					}
 				} else {
 					screen.removeChild(screennext);
 				}
@@ -1089,7 +1096,6 @@ public class Beta extends Game {
 	public static void main(String[] args) {
 		Beta game = new Beta();
 		game.start();
-		sound.PlayMusic("pizza");
 	}
 	
 	@Override

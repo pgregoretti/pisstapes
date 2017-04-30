@@ -2,24 +2,15 @@ package edu.virginia.engine.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.File;
-import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 
-import javax.print.attribute.standard.Media;
-//import javafx.scene.media.MediaPlayer;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-
-import java.io.File;
+//import javafx.scene.media.MediaPlayer;
 
 public class SoundManager implements LineListener {
 	HashMap<String, Clip> clipMap = new HashMap<String, Clip>();
@@ -53,9 +44,8 @@ public class SoundManager implements LineListener {
 		try{
 			Clip clip = AudioSystem.getClip();
 			clip.open(AudioSystem.getAudioInputStream(new File("resources" + File.separator + filename)));
+			clip.loop(Clip.LOOP_CONTINUOUSLY);
 			clipMap.put(id, clip);
-			//clipMap.get("zelda").start();
-			//clip.start();
 		} catch (UnsupportedAudioFileException ex) {
 			System.out.println("The specified audio file is not supported.");
 			ex.printStackTrace();
@@ -70,14 +60,14 @@ public class SoundManager implements LineListener {
 		}
 	}
 	public void PlayMusic(String id){
-		try{
-			while(true){
-				clipMap.get(id).start();
-			}
-			
-		} catch(Exception ex) { 
-			System.out.println("Error playing music!");
-		}
+//			clipMap.get(id).start();
+	}
+	public void StopMusic(String id){
+			clipMap.get(id).stop();
+	}
+	
+	public boolean contains(String id) {
+		return clipMap.containsKey(id);
 	}
 
 	/**
