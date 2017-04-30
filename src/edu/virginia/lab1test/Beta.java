@@ -112,24 +112,24 @@ public class Beta extends Game {
 	
 	
 	/*************************** LEVEL SWITCHING VARIABLES ***************************/
-	int level = 1;	
+	int level = 3;	
 	
 	//first entry in the array is a buffer because level goes from 1-4 (not 0-4)
 	//randomNum = rand.nextInt((max - min) + 1) + min;
-	int[] goodGeneration = {0, 120, 150, 150};
-	int[] goodGenerationMin = {0, 0, 30, 60};
+	int[] goodGeneration = {0, 250, 200, 150};
+	int[] goodGenerationMin = {0, 0, 60, 0};
 	//0 to 90
 	//30 to 120
 	//60 to 150
 	
-	int[] badGeneration = {0, 150, 120, 120};
-	int[] badGenerationMin = {0, 60, 30, 0};
+	int[] badGeneration = {0, 300, 200, 150};
+	int[] badGenerationMin = {0, 120, 40, 00};
 	//60 to 180
 	//30 to 150
 	//0 to 120
 	
-	int[] powerGeneration = {0, 240, 180, 120};
-	int[] powerGenerationMin = {0, 120, 60, 0};
+	int[] powerGeneration = {0, 300, 400, 500};
+	int[] powerGenerationMin = {0, 200, 350, 350};
 	//120 to 240
 	//60 to 180
 	//0 to 120
@@ -268,10 +268,7 @@ public class Beta extends Game {
 		/******* ADD TWEENS *******/
 		
 		/******* ADD SOUNDS *******/
-		sound.LoadMusic("pizza", "pizza.wav");
-		
-		
-		
+		sound.LoadMusic("pizza", "pizza.wav");		
 		
 	}
 	
@@ -793,8 +790,10 @@ public class Beta extends Game {
 				
 				/*************************** INVULNERABLITY COUNTER ***************************/
 				if(invulnerable && invulnerableTimer > 0){
+					trump.setAlpha((float) 0.6);
 					invulnerableTimer--;
 				} else {
+					trump.setAlpha(1);
 					invulnerable = false;
 					invulnerableTimer = 300;
 				}
