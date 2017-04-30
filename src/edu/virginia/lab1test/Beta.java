@@ -65,6 +65,7 @@ public class Beta extends Game {
 	
 	String[] bgImg = {"", "backgroundlevel1.png", "backgroundlevel2.png", "backgroundlevel3.png", "backgroundlevel4.png"};
 	Sprite levelBackground = new Sprite("LevelBackground");
+	Sprite filter = new Sprite("filter", "filter.png");
 	
 	/*************************** BASIC LEVEL VARIABLES ***************************/
 
@@ -277,6 +278,7 @@ public class Beta extends Game {
 		/******* POSITION SPRITES *******/
 		trump.setPosition(350, 530);
 		levelBackground.setPosition(200, 0);
+		filter.setPosition(200, 0);
 
 		//set hillary off screen
 		hillary.setPosition(610, 50);
@@ -377,7 +379,11 @@ public class Beta extends Game {
 				
 				//reset background
 				levelBackground.setImage(levelBackground.readImage(bgImg[level]));
-				
+
+				inv.setVisible(true);
+				slow.setVisible(true);
+				inv.setAlpha(0.2f);
+				slow.setAlpha(0.2f);
 				
 				//reset hillary
 
@@ -927,9 +933,12 @@ public class Beta extends Game {
 			if (limboTimer > 360) {
 				if (level == 4) {
 					screen.removeChild(screenboss);
+					screen.addChild(filter);
 					if (!sound.contains("battlesong")) {	
 						sound.LoadMusic("battlesong", "battlesong.wav");
 					}
+					inv.setVisible(false);
+					slow.setVisible(false);
 				} else {
 					screen.removeChild(screennext);
 				}
