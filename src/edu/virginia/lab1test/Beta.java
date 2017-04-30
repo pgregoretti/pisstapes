@@ -59,6 +59,9 @@ public class Beta extends Game {
 	Sprite screenwin = new Sprite("ScreenWin", "screenwin.png");
 	Sprite screenlose = new Sprite("ScreenLose", "screenlose.png");
 	
+	Sprite slow = new Sprite("kiss", "kiss.png");
+	Sprite inv = new Sprite("tacosalad", "tacosalad.png");
+	
 	String[] bgImg = {"", "backgroundlevel1.png", "backgroundlevel2.png", "backgroundlevel3.png", "backgroundlevel4.png"};
 	Sprite levelBackground = new Sprite("LevelBackground");
 	
@@ -233,6 +236,18 @@ public class Beta extends Game {
 		}
 		person.addChild(trump);
 		person.addChild(hillary);
+		
+		
+		background.addChild(inv);
+		background.addChild(slow);
+		inv.setPosition(30, 420);
+		inv.setScaleX(2);
+		inv.setScaleY(2);
+		slow.setScaleX(2);
+		slow.setScaleY(2);
+		slow.setPosition(30, 330);
+		inv.setAlpha(0.2f);
+		slow.setAlpha(0.2f);
 		
 		/******* ASSIGN ANIMATIONS *******/
 		trump.setAnimation("right", 0, 7);
@@ -751,6 +766,7 @@ public class Beta extends Game {
 								System.out.println("Trump was kissed by Ivanka");
 								if(!slowDown){
 									slowDown = true;
+									slow.setAlpha(1);
 								}
 								allobjects.removeChild(power.get(i));
 								power.remove(i);
@@ -772,6 +788,7 @@ public class Beta extends Game {
 								System.out.println("Trump ate a Taco Salad and became less racist");
 								if(!invulnerable){
 									invulnerable = true;
+									inv.setAlpha(1);
 								}
 								allobjects.removeChild(power.get(i));
 								power.remove(i);
@@ -794,6 +811,7 @@ public class Beta extends Game {
 					invulnerableTimer--;
 				} else {
 					trump.setAlpha(1);
+					inv.setAlpha(0.2f);
 					invulnerable = false;
 					invulnerableTimer = 300;
 				}
@@ -814,6 +832,7 @@ public class Beta extends Game {
 					slowDownTimer--;
 				} else if (slowDown) {
 					//kiss PU timer has run out!
+					slow.setAlpha(0.2f);
 					currentVY = oldVY; //reset currentVY
 					slowDown = false; //reset slowDown bool
 					slowDownTimer = 300; //reset slowDown timer
@@ -933,15 +952,15 @@ public class Beta extends Game {
 				time = "" + (int)Math.floor(timeVal/60);
 			}
 			levelString = "Level " + level;
-			
+			//invulnerable
 			if(invulnerable){
-				invul = "Invulnerable for: " + Math.floor(invulnerableTimer/60);
+				invul = "Invulnerable";
 			} else {
 				invul = "";
 			}
-			
+			//slowDown
 			if(slowDown){
-				sd = "Slowing down for: " + Math.floor(slowDownTimer/60);
+				sd = "Slowing Down";
 			} else {
 				sd = "";
 			}
@@ -954,10 +973,10 @@ public class Beta extends Game {
 			
 			g.setFont(myFontSidebar);
 			g.setColor(Color.BLACK);
-			
-			g.drawString(points, 15, 300);				
-			g.drawString(invul, 15, 320);
-			g.drawString(sd, 15, 340);			
+			g.drawString("Current PowerUps:", 15, 290);
+			g.drawString(points, 15, 250);				
+			g.drawString(invul, 15, 410);
+			g.drawString(sd, 15, 320);			
 		} else if (level == 4) {
 			bullets = "Bullets left: " + numBullets;
 			hilHealth = "Hillary's Health: " + hilHealthVal;
