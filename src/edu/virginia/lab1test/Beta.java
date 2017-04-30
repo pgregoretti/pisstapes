@@ -117,7 +117,7 @@ public class Beta extends Game {
 	
 	
 	/*************************** LEVEL SWITCHING VARIABLES ***************************/
-	int level = 1;	
+	int level = 3;	
 	
 	//first entry in the array is a buffer because level goes from 1-4 (not 0-4)
 	//randomNum = rand.nextInt((max - min) + 1) + min;
