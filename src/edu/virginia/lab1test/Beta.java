@@ -428,6 +428,10 @@ public class Beta extends Game {
 				limboTimer = 0;
 				//reset level timer
 				timeVal = timeValMax;
+				
+
+				trump.setAlpha((float) 1.0);
+				
 				//reset player health
 				healthContainer.removeAll();
 				for (int i = 1; i < health.length; i++) {
@@ -970,6 +974,10 @@ public class Beta extends Game {
 				limboTimer = 0;
 				//reset level timer
 				timeVal = timeValMax;
+				
+
+				trump.setAlpha((float) 1.0);
+				
 				//reset player health
 				healthContainer.removeAll();
 				for (int i = 1; i < health.length; i++) {
