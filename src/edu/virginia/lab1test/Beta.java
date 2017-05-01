@@ -869,10 +869,9 @@ public class Beta extends Game {
 								sound.PlaySoundEffect("lovemylife");
 							} else if(power.get(i).getId().contains("TacoSalad")){
 								System.out.println("Trump ate a Taco Salad and became less racist");
-								if(!invulnerable){
-									invulnerable = true;
-									inv.setAlpha(1);
-								}
+								invulnerable = true;
+								inv.setAlpha(1);
+								invulnerableTimer = 300;
 								allobjects.removeChild(power.get(i));
 								power.remove(i);
 								i--;
