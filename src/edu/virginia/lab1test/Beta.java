@@ -986,6 +986,8 @@ public class Beta extends Game {
 			gameLose = true;
 			gameRestart = true;
 			pause = true;
+			sound.LoadSoundEffect("reality", "reality.wav");
+			sound.PlaySoundEffect("reality");
 		}
 		
 		if (level >= 4) {
@@ -993,6 +995,8 @@ public class Beta extends Game {
 				gameWin = true;
 				gameRestart = true;
 				pause = true;
+				sound.LoadSoundEffect("maga", "maga.wav");
+				sound.PlaySoundEffect("maga");
 			} else if (numBullets <= 0 && bullet.isEmpty()) {
 				gameLose = true;
 				gameRestart = true;
