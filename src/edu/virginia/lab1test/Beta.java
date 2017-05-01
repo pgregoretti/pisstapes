@@ -183,10 +183,10 @@ public class Beta extends Game {
 	Sprite[] health = {health1, health1, health2, health3, health4, health5, health6, health7, health8, health9, health10};
 	int healthVal = 10;
 	int pointVal = 0;
-//	int timeVal = 3600;
-//	int timeValMax = 3600;
-	int timeVal = 900;
-	int timeValMax = 900;
+	int timeVal = 3600;
+	int timeValMax = 3600;
+//	int timeVal = 100;
+//	int timeValMax = 100;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -1004,6 +1004,8 @@ public class Beta extends Game {
 			gameLose = true;
 			gameRestart = true;
 			pause = true;
+			sound.LoadSoundEffect("reality", "reality.wav");
+			sound.PlaySoundEffect("reality");
 		}
 		
 		if (level >= 4) {
@@ -1011,6 +1013,8 @@ public class Beta extends Game {
 				gameWin = true;
 				gameRestart = true;
 				pause = true;
+				sound.LoadSoundEffect("maga", "maga.wav");
+				sound.PlaySoundEffect("maga");
 			} else if (numBullets <= 0 && bullet.isEmpty()) {
 				gameLose = true;
 				gameRestart = true;
