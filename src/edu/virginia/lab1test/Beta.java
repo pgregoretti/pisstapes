@@ -370,6 +370,7 @@ public class Beta extends Game {
 	public void update(ArrayList<String> pressedKeys) {
 		super.update(pressedKeys);
 		if (start) {
+			System.out.println(sidebar.getAllChildren().size());
 			if (!sound.contains("march")) {	
 				sound.LoadMusic("march", "march.wav");
 			}
@@ -499,7 +500,8 @@ public class Beta extends Game {
 				invul = "";
 				sd = "";
 				meat = "";
-
+				
+				sidebar.removeAll();
 				for(int i = 1; i< hilHealthArray.length; i++){
 					sidebar.addChild(hilHealthArray[i]);
 					hilHealthArray[i].setVisible(false);
