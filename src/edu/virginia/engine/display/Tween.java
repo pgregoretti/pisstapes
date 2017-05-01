@@ -38,12 +38,12 @@ public class Tween {
 		if (this.transition.equals("LINEAR")) {
 			this.incr = (this.endVal - this.startVal)/this.time;
 			System.out.println("Incr " + this.param + " of " + this.object.getId() + " by " + Double.toString(incr));
-			if(Math.abs(incr) < 0.5 && incr < 0){
+			if(Math.abs(incr) < 0.5 && incr < 0 && !this.getParam().equals("SCALE_X") && !this.getParam().equals("SCALE_Y")){
 				System.out.print("Fixing value from " + Double.toString(incr) + " to ");
 				this.incr = -1;
 				System.out.println(Double.toString(incr));
 			}
-			if(Math.abs(incr) < 0.5 && incr > 0){
+			if(Math.abs(incr) < 0.5 && incr > 0 && !this.getParam().equals("SCALE_X") && !this.getParam().equals("SCALE_Y")){
 				System.out.print("Fixing value from " + Double.toString(incr) + " to ");
 				this.incr = 1;
 				System.out.println(Double.toString(incr));

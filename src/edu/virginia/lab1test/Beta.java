@@ -16,6 +16,7 @@ import edu.virginia.engine.display.DisplayObjectContainer;
 import edu.virginia.engine.display.Game;
 import edu.virginia.engine.display.Sprite;
 import edu.virginia.engine.display.Tween;
+import edu.virginia.engine.display.TweenEvent;
 import edu.virginia.engine.display.TweenJuggler;
 import edu.virginia.engine.util.SoundManager;
 
@@ -60,8 +61,20 @@ public class Beta extends Game {
 	Sprite screenwin = new Sprite("ScreenWin", "screenwin.png");
 	Sprite screenlose = new Sprite("ScreenLose", "screenlose.png");
 	
-	Sprite slow = new Sprite("kiss", "kiss.png");
+//	Sprite slow = new Sprite("kiss", "kiss.png");
 	Sprite inv = new Sprite("tacosalad", "tacosalad.png");
+	
+	Sprite heartTween = new Sprite("heartTween", "heart.png");
+	Tween heartTweenScaleX = new Tween(heartTween);
+	Tween heartTweenScaleY = new Tween(heartTween);
+	Tween heartTweenX = new Tween(heartTween);
+	Tween heartTweenY = new Tween(heartTween);
+	
+	Sprite kissTween = new Sprite("kissTween", "kiss.png");
+	Tween kissTweenScaleX = new Tween(kissTween);
+	Tween kissTweenScaleY = new Tween(kissTween);
+	Tween kissTweenY = new Tween(kissTween);
+	
 	
 	String[] bgImg = {"", "backgroundlevel1.png", "backgroundlevel2.png", "backgroundlevel3.png", "backgroundlevel4.png"};
 	Sprite levelBackground = new Sprite("LevelBackground");
@@ -146,11 +159,14 @@ public class Beta extends Game {
 	int vCounter = 0; //to count which frame we're on
 	
 	boolean invulnerable = false;
+	boolean invulnerableTween = false;
 	int invulnerableTimer = 300;
 	int invulnerableTimerMax = 300; //this is really dumb but trust me it will make changing values easier
 	boolean slowDown = false;
+	boolean slowDownTween = false;
 	int slowDownTimer = 300;
 	int slowDownTimerMax = 300; //this is really dumb but trust me it will make changing values easier
+	boolean meatLoaf = false;
 	
 
 	String points = "";
@@ -158,8 +174,15 @@ public class Beta extends Game {
 	String levelString = "";
 	String bullets = "";
 	String hilHealth = "";
+	int invulCount = 60;
+	int sdCount = 60;
+	int meatCount = 60;
+	int maxmeatCount = 60;
+	int maxinvulCount = 60;
+	int maxsdCount = 60;
 	String invul = ""; //invulnerable string
 	String sd = ""; //slow down string
+	String meat = ""; //meat string
 	String levelMessage = "";
 	String levelMessage2 = "";
 	
@@ -183,10 +206,10 @@ public class Beta extends Game {
 	Sprite[] health = {health1, health1, health2, health3, health4, health5, health6, health7, health8, health9, health10};
 	int healthVal = 10;
 	int pointVal = 0;
-	int timeVal = 3600;
-	int timeValMax = 3600;
-//	int timeVal = 100;
-//	int timeValMax = 100;
+//	int timeVal = 3600;
+//	int timeValMax = 3600;
+	int timeVal = 1800;
+	int timeValMax = 1800;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -256,18 +279,22 @@ public class Beta extends Game {
 		}
 		person.addChild(trump);
 		person.addChild(hillary);
+		person.addChild(heartTween);
+		heartTween.setVisible(false);
+		person.addChild(kissTween);
+		kissTween.setVisible(false);
 		
 		
 		background.addChild(inv);
-		background.addChild(slow);
-		inv.setPosition(30, 420);
+//		background.addChild(slow);
+		inv.setPosition(55, 275);
 		inv.setScaleX(2);
 		inv.setScaleY(2);
-		slow.setScaleX(2);
-		slow.setScaleY(2);
-		slow.setPosition(30, 330);
+//		slow.setScaleX(2);
+//		slow.setScaleY(2);
+//		slow.setPosition(30, 330);
 		inv.setAlpha(0.2f);
-		slow.setAlpha(0.2f);
+//		slow.setAlpha(0.2f);
 		
 		/******* ASSIGN ANIMATIONS *******/
 		trump.setAnimation("right", 0, 7);
@@ -381,9 +408,9 @@ public class Beta extends Game {
 				levelBackground.setImage(levelBackground.readImage(bgImg[level]));
 
 				inv.setVisible(true);
-				slow.setVisible(true);
+//				slow.setVisible(true);
 				inv.setAlpha(0.2f);
-				slow.setAlpha(0.2f);
+//				slow.setAlpha(0.2f);
 				
 				//reset hillary
 
@@ -446,10 +473,20 @@ public class Beta extends Game {
 				oldVY = 1;
 				//reset power up status
 				invulnerable = false;
+				invulnerableTween = false;
 				invulnerableTimer = invulnerableTimerMax;
 				slowDown = false;
+				slowDownTween = false;
 				slowDownTimer = slowDownTimerMax; 
+				meatLoaf = false;
 				
+				invulCount = maxinvulCount;
+				sdCount = maxsdCount;
+				meatCount = maxmeatCount;
+				
+				invul = "";
+				sd = "";
+				meat = "";
 
 				for(int i = 1; i< hilHealthArray.length; i++){
 					sidebar.addChild(hilHealthArray[i]);
@@ -510,6 +547,8 @@ public class Beta extends Game {
 			
 			if (timeVal <= 0 && !levelLimbo){
 				level++;
+
+				TweenJuggler.getInstance().clear();
 				
 				//reset objects
 				for (int i = 0; i < good.size(); i++) {
@@ -745,6 +784,20 @@ public class Beta extends Game {
 				//0 = kiss, 1 = meatloaf, 2 = tacosalad
 				
 				if (frameCounterPower == currentTimerPower) {
+					boolean hasTaco = false;
+					boolean hasKiss = false;
+					boolean hasMeat = false;
+					
+					for (int i = 0; i < power.size(); i++) {
+						if (power.get(i).getId().contains("powerKiss")) {
+							hasKiss = true;
+						} else if (power.get(i).getId().contains("powerMeatloaf")) {
+							hasMeat = true;
+						} else if (power.get(i).getId().contains("powerTacoSalad")) {
+							hasTaco = true;
+						}
+					}
+					
 					boolean puGenerated = false;
 					//generate new PU object
 					if (powerUpNum == 0) {
@@ -755,18 +808,18 @@ public class Beta extends Game {
 						} else if (level == 3) {
 							cvy = 16;
 						}
-						if(currentVY > cvy){
+						if(currentVY > cvy && !hasKiss){
 							power.add(new Sprite("powerKiss" + powerCounter, "kiss.png"));
 							puGenerated = true;
 						}
-					} else if (powerUpNum == 1) {
+					} else if (powerUpNum == 1 && !hasMeat) {
 						//meatloaf is health so don't generate if health is full
 						if(healthVal < 10){
 							power.add(new Sprite("powerMeatloaf" + powerCounter, "meatloaf.png"));
 							puGenerated = true;
 						}
 						//taco salad is invulnerability
-					} else if (powerUpNum == 2) {
+					} else if (powerUpNum == 2 && !hasTaco) {
 						power.add(new Sprite("powerTacoSalad" + powerCounter, "tacosalad.png"));
 						puGenerated = true;
 					}
@@ -847,10 +900,11 @@ public class Beta extends Game {
 						if(power.get(i).collidesWith(trump)){
 							if(power.get(i).getId().contains("Kiss")){
 								System.out.println("Trump was kissed by Ivanka");
-								if(!slowDown){
-									slowDown = true;
-									slow.setAlpha(1);
-								}
+								slowDown = true;
+								slowDownTween = true;
+								sdCount = 0;
+								person.addChild(heartTween);
+//								slow.setAlpha(1);
 								allobjects.removeChild(power.get(i));
 								power.remove(i);
 								i--;
@@ -858,10 +912,25 @@ public class Beta extends Game {
 								sound.PlaySoundEffect("ivanka");
 							} else if(power.get(i).getId().contains("Meatloaf")){
 								System.out.println("Trump ate meatloaf with Chris Christie");
-								if(healthVal<10){
+								meatLoaf = true;
+								meatCount = 0;
+								if(healthVal < 10){
 									healthVal++;
 									healthContainer.addChild(health[healthVal]);
 								}
+								
+								//TWEENING EFFECT
+								heartTween.setPivotPoint(13, 11);
+								heartTween.setPosition(trump.getPositionX() + heartTween.getPivotPointX() + 30, trump.getPositionY() + heartTween.getPivotPointY());
+								heartTween.setScaleX(0);
+								heartTween.setScaleY(0);
+								person.addChild(heartTween);
+
+								heartTweenScaleX.animate("SCALE_X", 0.0, 2.3, 20);
+								heartTweenScaleY.animate("SCALE_Y", 0.0, 2.3, 20);
+								heartTweenX.animate("X", heartTween.getPositionX(), 95 + heartTween.getPivotPointX(), 15);
+								heartTweenY.animate("Y", heartTween.getPositionY(), 78 + heartTween.getPivotPointY(), 15);
+								
 								allobjects.removeChild(power.get(i));
 								power.remove(i);
 								i--;
@@ -870,6 +939,8 @@ public class Beta extends Game {
 							} else if(power.get(i).getId().contains("TacoSalad")){
 								System.out.println("Trump ate a Taco Salad and became less racist");
 								invulnerable = true;
+								invulnerableTween = true;
+								invulCount = 0;
 								inv.setAlpha(1);
 								invulnerableTimer = 300;
 								allobjects.removeChild(power.get(i));
@@ -884,6 +955,25 @@ public class Beta extends Game {
 							i--;
 						}	
 					} 		
+				}
+				
+				/*************************** TWEENING ***************************/
+				if (meatLoaf) {
+					if (!heartTween.getVisible()) {
+						heartTween.setVisible(true);
+						TweenJuggler.getInstance().add(heartTweenScaleX);
+						TweenJuggler.getInstance().add(heartTweenScaleY);
+					} else {
+						if(!TweenJuggler.getInstance().getTweens().contains(heartTweenScaleX) && !TweenJuggler.getInstance().getTweens().contains(heartTweenScaleX)){
+							TweenJuggler.getInstance().add(heartTweenX);
+							TweenJuggler.getInstance().add(heartTweenY);
+							meatLoaf = false;
+						}
+					}
+				} else {
+					if(!TweenJuggler.getInstance().getTweens().contains(heartTweenX) && !TweenJuggler.getInstance().getTweens().contains(heartTweenY)){
+						heartTween.setVisible(false);
+					}
 				}
 				
 				
@@ -923,7 +1013,7 @@ public class Beta extends Game {
 				
 				if (slowDown) {
 					currentVY = 3 * currentVY / 4;
-					slow.setAlpha(0.2f);
+//					slow.setAlpha(0.2f);
 					slowDown = false;
 				}
 				
@@ -932,6 +1022,36 @@ public class Beta extends Game {
 					currentVY++;
 					vCounter = 0;
 				}
+				
+				
+				/**********************
+				 * 
+				 * DEALING WITH STRING DISPLAYS
+				 * 
+				 **********************/
+				
+				//invulnerable
+				if(invulCount != maxinvulCount){
+					invulCount++;
+					invul = "Invulnerable!";
+				} else {
+					invul = "";
+				}
+				//slowDown
+				if(sdCount != maxsdCount){
+					sdCount++;
+					sd = "Slowing Down!";
+				} else {
+					sd = "";
+				}
+				//meat
+				if(meatCount != maxmeatCount){
+					meatCount++;
+					meat = "+1!";
+				} else {
+					meat = "";
+				}
+		
 				
 			}
 			
@@ -959,7 +1079,7 @@ public class Beta extends Game {
 					screen.removeChild(screenboss);
 //					screen.addChild(filter);
 					inv.setVisible(false);
-					slow.setVisible(false);
+//					slow.setVisible(false);
 				} else {
 					screen.removeChild(screennext);
 				}
@@ -989,11 +1109,20 @@ public class Beta extends Game {
 				oldVY = 1;
 				//reset power up status
 				invulnerable = false;
+				invulnerableTween = false;
 				invulnerableTimer = invulnerableTimerMax;
-//				inv.setVisible(false);
-//				slow.setVisible(false);
 				slowDown = false;
+				slowDownTween = false;
 				slowDownTimer = slowDownTimerMax; 
+				meatLoaf = false;
+				
+				invulCount = maxinvulCount;
+				sdCount = maxsdCount;
+				meatCount = maxmeatCount;
+				
+				invul = "";
+				sd = "";
+				meat = "";
 			}
 		}
 		
@@ -1047,26 +1176,18 @@ public class Beta extends Game {
 
 
 		if (level < 4) {
-			points = "Points: " + pointVal;
+			//LEVEL
+			levelString = "Level " + level;
+			//FORMATTING TIMER INT
 			if ((int)Math.floor(timeVal/60) < 10) {
 				time = "0" + (int)Math.floor(timeVal/60);
-				g.drawString("Current PowerUps:", 15, 290);
 			} else {
 				time = "" + (int)Math.floor(timeVal/60);
 			}
-			levelString = "Level " + level;
-			//invulnerable
-			if(invulnerable){
-				invul = "Invulnerable";
-			} else {
-				invul = "";
-			}
-			//slowDown
-			if(slowDown){
-				sd = "Slowing Down";
-			} else {
-				sd = "";
-			}
+			//POINTS
+			points = "Points: " + pointVal;
+			//POWERUPS
+//			g.drawString("Current PowerUps", 20, 290);
 			g.setFont(myFontLevel);
 			g.drawString(levelString, 10, 34);
 			
@@ -1076,9 +1197,7 @@ public class Beta extends Game {
 			
 			g.setFont(myFontSidebar);
 			g.setColor(Color.BLACK);
-			g.drawString(points, 15, 250);				
-			g.drawString(invul, 15, 410);
-			g.drawString(sd, 15, 320);			
+			g.drawString(points, 15, 235);			
 		} else if (level == 4) {
 			bullets = "Bullets left: " + numBullets;
 			hilHealth = "";
@@ -1100,6 +1219,15 @@ public class Beta extends Game {
 //		if(trump != null) trump.draw(g);
 
 		super.draw(g);
+		
+		if (level < 4 && !pause) {
+			g.setFont(myFontLevel);
+			g.setColor(Color.RED);
+			g.drawString(invul, 240, 325);
+			g.drawString(sd, 240, 325);
+			g.drawString(meat, 365, 325);
+		}
+	
 		
 		if (levelLimbo) {
 			if (level == 4) {
@@ -1182,8 +1310,8 @@ public class Beta extends Game {
 					/*************************** GENERATE A BULLET ***************************/
 					//generate new bullet object
 					bullet.add(new Sprite("bullet" + bulletCounter, "bullet.png"));
-					//set bullet position to trump's position
-					bullet.get(bullet.size() - 1).setPosition(trump.getPositionX(), trump.getPositionY());
+					//set bullet position to trump's position (from middle of trump sprite)
+					bullet.get(bullet.size() - 1).setPosition(trump.getPositionX() + 36, trump.getPositionY());
 					//turn on physics for this object
 					bullet.get(bullet.size() - 1).setPhysics(true);
 					//set bullet's velocity to the bulletVY
@@ -1195,7 +1323,6 @@ public class Beta extends Game {
 					bulletCounter++;					
 				}
 			}
-			
 		}
 	}
 }
