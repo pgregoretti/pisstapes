@@ -108,10 +108,10 @@ public class Beta extends Game {
 	int frameCounterFB = 0;
 	int currentTimerFB = 0;
 	
-	int hilHealthVal = 100;
+	int hilHealthVal = 10;
 	int numBullets = 0;
-	int bulletVY = 8;
-	int fireballVY = 12;
+	int bulletVY = 5;
+	int fireballVY = 15;
 	
 	int bulletCount = 0;
 	
@@ -121,14 +121,14 @@ public class Beta extends Game {
 	
 	//first entry in the array is a buffer because level goes from 1-4 (not 0-4)
 	//randomNum = rand.nextInt((max - min) + 1) + min;
-	int[] goodGeneration = {0, 250, 200, 150};
-	int[] goodGenerationMin = {0, 0, 60, 0};
+	int[] goodGeneration = {0, 150, 200, 250};
+	int[] goodGenerationMin = {0, 0, 60, 75};
 	//0 to 90
 	//30 to 120
 	//60 to 150
 	
 	int[] badGeneration = {0, 300, 200, 150};
-	int[] badGenerationMin = {0, 120, 40, 00};
+	int[] badGenerationMin = {0, 120, 40, 20};
 	//60 to 180
 	//30 to 150
 	//0 to 120
@@ -182,11 +182,11 @@ public class Beta extends Game {
 	Sprite health10 = new Sprite("Health10", "heart.png");
 	Sprite[] health = {health1, health1, health2, health3, health4, health5, health6, health7, health8, health9, health10};
 	int healthVal = 10;
-	int pointVal = 100;
+	int pointVal = 0;
 //	int timeVal = 3600;
 //	int timeValMax = 3600;
-	int timeVal = 100;
-	int timeValMax = 100;
+	int timeVal = 900;
+	int timeValMax = 900;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -313,7 +313,7 @@ public class Beta extends Game {
 		//hillary goes from x = 250 to 490
 		tempX = hillaryRandom.nextInt((490 - 250) + 1) + 250;
 		System.out.println("Hillary is travelling to " + Integer.toString(tempX));
-		hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 125);
+		hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 90);
 		
 		/******* ADD TWEENS *******/
 		
@@ -392,6 +392,7 @@ public class Beta extends Game {
 				hillary.setPosition(610, 50);
 				hillary.setVisible(false);
 				
+				
 				//reset objects
 				for (int i = 0; i < good.size(); i++) {
 					//remove from disp tree
@@ -412,10 +413,6 @@ public class Beta extends Game {
 				for (int i = 0; i < fireball.size(); i++) {
 					//remove from disp tree
 					allobjects.removeChild(fireball.get(i));
-				}
-				for(int i = 1; i< hilHealthArray.length; i++){
-					sidebar.addChild(hilHealthArray[i]);
-					hilHealthArray[i].setVisible(false);
 				}
 				
 				//clear arraylists
@@ -449,6 +446,12 @@ public class Beta extends Game {
 				slowDown = false;
 				slowDownTimer = slowDownTimerMax; 
 				
+
+				for(int i = 1; i< hilHealthArray.length; i++){
+					sidebar.addChild(hilHealthArray[i]);
+					hilHealthArray[i].setVisible(false);
+				}
+				hilHealthVal = 10;
 				numBullets = 0;
 				bulletCount = 0;
 
@@ -533,7 +536,10 @@ public class Beta extends Game {
 					} else {
 						sound.StopMusic("march");
 						sound.LoadSoundEffect("hillaryintro", "hillaryintro.wav");
-						sound.PlaySoundEffect("hillaryintro");							
+						sound.PlaySoundEffect("hillaryintro");	
+						if (!sound.contains("battlesong")) {	
+							sound.LoadMusic("battlesong", "battlesong.wav");
+						}
 					}
 				}
 				
@@ -561,7 +567,7 @@ public class Beta extends Game {
 				
 				//Make hil visible
 				hillary.setVisible(true);
-				for(int i =0; i<hilHealthArray.length; i++){
+				for(int i = 0; i < hilHealthArray.length; i++){
 					hilHealthArray[i].setVisible(true);
 				}
 				
@@ -571,7 +577,7 @@ public class Beta extends Game {
 					/** X TWEEN **/
 					int prevX = tempX;
 					tempX = hillaryRandom.nextInt((490 - 250) + 1) + 250;
-					hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 125);
+					hillaryX.animate("X", hillary.getPositionX(), (double)tempX, 90);
 					if (tempX - hillary.getPositionX() <= 0 && hillary.getAnimation() != "left") {
 						System.out.println("hillary moving left");
 						hillary.animate("left");
@@ -621,8 +627,8 @@ public class Beta extends Game {
 					if (bullet.get(i).getPositionY() <= 220) {
 						//CHECK FOR COLLISIONS
 						if(bullet.get(i).collidesWith(hillary)){
-							hilHealthVal -= 10;
-							sidebar.removeChild(hilHealthArray[hilHealthVal/10 + 1]);
+							sidebar.removeChild(hilHealthArray[hilHealthVal]);
+							hilHealthVal--;
 							//REMOVE HILLARY'S HEALTH HERE
 							allobjects.removeChild(bullet.get(i));
 							bullet.remove(i);
@@ -738,9 +744,17 @@ public class Beta extends Game {
 					boolean puGenerated = false;
 					//generate new PU object
 					if (powerUpNum == 0) {
+						int cvy = 8;
 						//kiss slows everything down
-						power.add(new Sprite("powerKiss" + powerCounter, "kiss.png"));
-						puGenerated = true;
+						if (level == 2) {
+							cvy = 12;
+						} else if (level == 3) {
+							cvy = 16;
+						}
+						if(currentVY > cvy){
+							power.add(new Sprite("powerKiss" + powerCounter, "kiss.png"));
+							puGenerated = true;
+						}
 					} else if (powerUpNum == 1) {
 						//meatloaf is health so don't generate if health is full
 						if(healthVal < 10){
@@ -885,7 +899,7 @@ public class Beta extends Game {
 				/*************************** MAKE OBJECTS FALL FASTER EVERY 60 FRAMES ***************************/
 				//capped at... vCap???
 				//precision for timing of first speed boost will be off but who cares????
-				
+				/*
 				//KISS EFFECT ON VELOCITY
 				if(slowDown && slowDownTimer == slowDownTimerMax){
 					//first instance of colliding with kiss PU
@@ -901,6 +915,13 @@ public class Beta extends Game {
 					currentVY = oldVY; //reset currentVY
 					slowDown = false; //reset slowDown bool
 					slowDownTimer = 300; //reset slowDown timer
+				}
+				*/
+				
+				if (slowDown) {
+					currentVY = 3 * currentVY / 4;
+					slow.setAlpha(0.2f);
+					slowDown = false;
 				}
 				
 				vCounter++;
@@ -934,9 +955,6 @@ public class Beta extends Game {
 				if (level == 4) {
 					screen.removeChild(screenboss);
 //					screen.addChild(filter);
-					if (!sound.contains("battlesong")) {	
-						sound.LoadMusic("battlesong", "battlesong.wav");
-					}
 					inv.setVisible(false);
 					slow.setVisible(false);
 				} else {
