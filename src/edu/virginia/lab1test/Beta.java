@@ -26,6 +26,7 @@ public class Beta extends Game {
 	//create the font to use. Specify the size!
 	Font myFontSidebar;
 	Font myFontLevel;
+	Font myFontLevelChange;
 	Font myFontTimer;
 	Font myFontPU;
 	Font myFontCounter;
@@ -74,6 +75,12 @@ public class Beta extends Game {
 	Tween kissTweenScaleX = new Tween(kissTween);
 	Tween kissTweenScaleY = new Tween(kissTween);
 	Tween kissTweenY = new Tween(kissTween);
+	
+	Sprite tacoTween = new Sprite("tacoTween", "tacosalad.png");
+	Tween tacoTweenScaleX = new Tween(tacoTween);
+	Tween tacoTweenScaleY = new Tween(tacoTween);
+	Tween tacoTweenX = new Tween(tacoTween);
+	Tween tacoTweenY = new Tween(tacoTween);
 	
 	
 	String[] bgImg = {"", "backgroundlevel1.png", "backgroundlevel2.png", "backgroundlevel3.png", "backgroundlevel4.png"};
@@ -205,11 +212,11 @@ public class Beta extends Game {
 	Sprite health10 = new Sprite("Health10", "heart.png");
 	Sprite[] health = {health1, health1, health2, health3, health4, health5, health6, health7, health8, health9, health10};
 	int healthVal = 10;
-	int pointVal = 0;
+	int pointVal = 100;
 //	int timeVal = 3600;
 //	int timeValMax = 3600;
-	int timeVal = 1800;
-	int timeValMax = 1800;
+	int timeVal = 100;
+	int timeValMax = 100;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -244,13 +251,15 @@ public class Beta extends Game {
 		    myFontSidebar = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(12f);
 		    myFontLevel = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(30f);
 		    myFontTimer = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(110f);
-		    myFontCounter = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(125f);
+		    myFontLevelChange = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(125f);
+		    myFontCounter = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(55f);
 
 		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		    //register the font
 		    ge.registerFont(myFontSidebar);
 		    ge.registerFont(myFontLevel);
 		    ge.registerFont(myFontTimer);
+		    ge.registerFont(myFontLevelChange);
 		    ge.registerFont(myFontCounter);
 		} catch (IOException e) {
 		    e.printStackTrace();
@@ -279,10 +288,13 @@ public class Beta extends Game {
 		}
 		person.addChild(trump);
 		person.addChild(hillary);
+		
 		person.addChild(heartTween);
 		heartTween.setVisible(false);
 		person.addChild(kissTween);
 		kissTween.setVisible(false);
+		person.addChild(tacoTween);
+		tacoTween.setVisible(false);
 		
 		
 		background.addChild(inv);
@@ -696,11 +708,16 @@ public class Beta extends Game {
 						if(fireball.get(i).collidesWith(trump)){
 							healthContainer.removeChild(health[healthVal]);
 							healthVal--;
+							if (hilHealthVal < 10) {
+								hilHealthVal++;
+								sidebar.addChild(hilHealthArray[hilHealthVal]);								
+							}
+							
 							allobjects.removeChild(fireball.get(i));
 							fireball.remove(i);
 							i--;
-							sound.LoadSoundEffect("bullshit", "bullshit.wav");
-							sound.PlaySoundEffect("bullshit");
+							sound.LoadSoundEffect("hilhealth", "hilhealth.wav");
+							sound.PlaySoundEffect("hilhealth");
 						} else if (fireball.get(i).getPositionY() >= 640) {
 							allobjects.removeChild(fireball.get(i));
 							fireball.remove(i);
@@ -857,7 +874,7 @@ public class Beta extends Game {
 					if (good.get(i).getPositionY() >= 450) {
 						//CHECK FOR COLLISIONS
 						if(good.get(i).collidesWith(trump)){
-							pointVal+=5;
+							pointVal+=10;
 							allobjects.removeChild(good.get(i));
 							good.remove(i);
 							i--;
@@ -903,8 +920,18 @@ public class Beta extends Game {
 								slowDown = true;
 								slowDownTween = true;
 								sdCount = 0;
-								person.addChild(heartTween);
 //								slow.setAlpha(1);
+								
+								//TWEENING EFFECT
+								kissTween.setPivotPoint(20, 15);
+								kissTween.setPosition(trump.getPositionX() + kissTween.getPivotPointX() + 30, trump.getPositionY() + kissTween.getPivotPointY());
+								kissTween.setScaleX(0);
+								kissTween.setScaleY(0);
+
+								kissTweenScaleX.animate("SCALE_X", 0.0, 1.5, 20);
+								kissTweenScaleY.animate("SCALE_Y", 0.0, 1.5, 20);
+								kissTweenY.animate("Y", kissTween.getPositionY(), -60, 15);
+								
 								allobjects.removeChild(power.get(i));
 								power.remove(i);
 								i--;
@@ -924,7 +951,6 @@ public class Beta extends Game {
 								heartTween.setPosition(trump.getPositionX() + heartTween.getPivotPointX() + 30, trump.getPositionY() + heartTween.getPivotPointY());
 								heartTween.setScaleX(0);
 								heartTween.setScaleY(0);
-								person.addChild(heartTween);
 
 								heartTweenScaleX.animate("SCALE_X", 0.0, 2.3, 20);
 								heartTweenScaleY.animate("SCALE_Y", 0.0, 2.3, 20);
@@ -943,6 +969,18 @@ public class Beta extends Game {
 								invulCount = 0;
 								inv.setAlpha(1);
 								invulnerableTimer = 300;
+								
+								//TWEENING EFFECT
+								tacoTween.setPivotPoint(20, 20);
+								tacoTween.setPosition(trump.getPositionX() + tacoTween.getPivotPointX() + 30, trump.getPositionY() + tacoTween.getPivotPointY());
+								tacoTween.setScaleX(0);
+								tacoTween.setScaleY(0);
+
+								tacoTweenScaleX.animate("SCALE_X", 0.0, 1.5, 20);
+								tacoTweenScaleY.animate("SCALE_Y", 0.0, 1.5, 20);
+								tacoTweenX.animate("X", tacoTween.getPositionX(), 96 + tacoTween.getPivotPointX(), 15);
+								tacoTweenY.animate("Y", tacoTween.getPositionY(), 275 + tacoTween.getPivotPointY(), 15);
+								
 								allobjects.removeChild(power.get(i));
 								power.remove(i);
 								i--;
@@ -973,6 +1011,39 @@ public class Beta extends Game {
 				} else {
 					if(!TweenJuggler.getInstance().getTweens().contains(heartTweenX) && !TweenJuggler.getInstance().getTweens().contains(heartTweenY)){
 						heartTween.setVisible(false);
+					}
+				}
+				if (slowDownTween) {
+					if (!kissTween.getVisible()) {
+						kissTween.setVisible(true);
+						TweenJuggler.getInstance().add(kissTweenScaleX);
+						TweenJuggler.getInstance().add(kissTweenScaleY);
+					} else {
+						if(!TweenJuggler.getInstance().getTweens().contains(kissTweenScaleX) && !TweenJuggler.getInstance().getTweens().contains(kissTweenScaleX)){
+							TweenJuggler.getInstance().add(kissTweenY);
+							slowDownTween = false;
+						}
+					}
+				} else {
+					if(!TweenJuggler.getInstance().getTweens().contains(kissTweenY)){
+						kissTween.setVisible(false);
+					}
+				}
+				if (invulnerableTween) {
+					if (!tacoTween.getVisible()) {
+						tacoTween.setVisible(true);
+						TweenJuggler.getInstance().add(tacoTweenScaleX);
+						TweenJuggler.getInstance().add(tacoTweenScaleY);
+					} else {
+						if(!TweenJuggler.getInstance().getTweens().contains(tacoTweenScaleX) && !TweenJuggler.getInstance().getTweens().contains(tacoTweenScaleX)){
+							TweenJuggler.getInstance().add(tacoTweenX);
+							TweenJuggler.getInstance().add(tacoTweenY);
+							invulnerableTween = false;
+						}
+					}
+				} else {
+					if(!TweenJuggler.getInstance().getTweens().contains(tacoTweenX) && !TweenJuggler.getInstance().getTweens().contains(tacoTweenY)){
+						tacoTween.setVisible(false);
 					}
 				}
 				
@@ -1227,6 +1298,12 @@ public class Beta extends Game {
 			g.drawString(sd, 240, 325);
 			g.drawString(meat, 365, 325);
 		}
+		
+		if (level == 4 && numBullets == 1) {
+			g.setFont(myFontLevel);
+			g.setColor(Color.RED);
+			g.drawString("1 bullet left!", 240, 325);
+		}
 	
 		
 		if (levelLimbo) {
@@ -1263,7 +1340,7 @@ public class Beta extends Game {
 				}
 				g.drawString(countUp, 143, 569);
 			} else {
-				g.setFont(myFontCounter);
+				g.setFont(myFontLevelChange);
 				g.setColor(new Color(224, 145, 5));
 				g.drawString(levelMessage, 250, 430);
 			}
