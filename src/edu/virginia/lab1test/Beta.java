@@ -876,7 +876,7 @@ public class Beta extends Game {
 					if (good.get(i).getPositionY() >= 450) {
 						//CHECK FOR COLLISIONS
 						if(good.get(i).collidesWith(trump)){
-							pointVal+=10;
+							pointVal+=3;
 							allobjects.removeChild(good.get(i));
 							good.remove(i);
 							i--;
