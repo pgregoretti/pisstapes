@@ -183,10 +183,10 @@ public class Beta extends Game {
 	Sprite[] health = {health1, health1, health2, health3, health4, health5, health6, health7, health8, health9, health10};
 	int healthVal = 10;
 	int pointVal = 100;
-//	int timeVal = 3600;
-//	int timeValMax = 3600;
-	int timeVal = 100;
-	int timeValMax = 100;
+	int timeVal = 3600;
+	int timeValMax = 3600;
+//	int timeVal = 100;
+//	int timeValMax = 100;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
