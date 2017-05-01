@@ -117,7 +117,7 @@ public class Beta extends Game {
 	
 	
 	/*************************** LEVEL SWITCHING VARIABLES ***************************/
-	int level = 3;	
+	int level = 1;	
 	
 	//first entry in the array is a buffer because level goes from 1-4 (not 0-4)
 	//randomNum = rand.nextInt((max - min) + 1) + min;
@@ -933,7 +933,7 @@ public class Beta extends Game {
 			if (limboTimer > 360) {
 				if (level == 4) {
 					screen.removeChild(screenboss);
-					screen.addChild(filter);
+//					screen.addChild(filter);
 					if (!sound.contains("battlesong")) {	
 						sound.LoadMusic("battlesong", "battlesong.wav");
 					}
