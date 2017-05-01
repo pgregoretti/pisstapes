@@ -212,11 +212,11 @@ public class Beta extends Game {
 	Sprite health10 = new Sprite("Health10", "heart.png");
 	Sprite[] health = {health1, health1, health2, health3, health4, health5, health6, health7, health8, health9, health10};
 	int healthVal = 10;
-	int pointVal = 100;
-//	int timeVal = 3600;
-//	int timeValMax = 3600;
-	int timeVal = 100;
-	int timeValMax = 100;
+	int pointVal = 0;
+	int timeVal = 3600;
+	int timeValMax = 3600;
+//	int timeVal = 100;
+//	int timeValMax = 100;
 	//1 min per level - 60 fps * 60 sec = 3600
 	
 	
@@ -252,7 +252,7 @@ public class Beta extends Game {
 		    myFontLevel = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(30f);
 		    myFontTimer = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(110f);
 		    myFontLevelChange = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(125f);
-		    myFontCounter = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(55f);
+		    myFontCounter = Font.createFont(Font.TRUETYPE_FONT, new File("resources/joystix_monospace.ttf")).deriveFont(90f);
 
 		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		    //register the font
@@ -1332,13 +1332,12 @@ public class Beta extends Game {
 						pointVal = 0;
 					}
 				}
-				g.drawString(countdown, 143, 219);
-				
-				g.setColor(new Color(250, 226, 147));
+				g.drawString(countdown, 37, 187);
+
 				if (bulletCount < numBullets) {
 					bulletCount++;
 				}
-				g.drawString(countUp, 143, 569);
+				g.drawString(countUp, 337, 187);
 			} else {
 				g.setFont(myFontLevelChange);
 				g.setColor(new Color(224, 145, 5));
