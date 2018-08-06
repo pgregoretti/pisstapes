@@ -5,6 +5,8 @@ Trump Towers' Golden Showers was the final project of Pamela Gregoretti ([@pgreg
 
 Every semester, all of the student projects of CS 4730 are featured in a free video game expo for all UVA students and faculty to see. Our project won Audience Favorite through a 3 ticket voting system, resulting in some sweet Amazon gift cards.
 
+![TTGS Preview](https://raw.githubusercontent.com/pgregoretti/trump-towers-golden-showers/master/trumptowers.png)
+
 # How to Play
 
 TTGS is a basic fall-and-catch 2D video game. In the first three levels, you can move left and right to collect the falling objects
