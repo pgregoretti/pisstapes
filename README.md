@@ -1,7 +1,7 @@
 # Trump Towers' Golden Showers
 ## AKA Help Donald Trump Find His Piss Tapes
 
-Trump Towers' Golden Showers was the final project of Pamela Gregoretti ([@pgregoretti](https://github.com/pgregoretti)), Molly Sall ([@mollysall](https://github.com/mollysall)), and Zophie Quan ([@zyq6qe](https://github.com/zyq6qe)) for CS 4730 - Computer Game Design Spring 2017 at University of Virginia. The class required building your own 2D video game engine in Java, requiring basic physics, tweening, and other video game mechanics. All code was written by us, with most of the art completed by Zophie. Music and some sprites were found online but I do not remember where. Please don't get mad!
+Trump Towers' Golden Showers was the final project of Pamela Gregoretti ([@pgregoretti](https://github.com/pgregoretti)), Molly Sall ([@mollysall](https://github.com/mollysall)), and Zophie Quan ([@zyq6qe](https://github.com/zyq6qe)) for CS 4730 - Computer Game Design Spring 2017 at University of Virginia. The class required building your own 2D video game engine in Java, implementing basic physics, tweening, and other video game mechanics. All code was written by us, with most of the art completed by Zophie. Music and some sprites were found online but I do not remember where. Please don't get mad!
 
 Every semester, all of the student projects of CS 4730 are featured in a free video game expo for all UVA students and faculty to see. Our project won Audience Favorite through a 3 ticket voting system, resulting in some sweet Amazon gift cards.
 
